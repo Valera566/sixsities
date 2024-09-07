@@ -132,4 +132,5 @@ function MainScreen({ placeCardCount }: MainProps): JSX.Element {
   );
 }
 
+
 export default MainScreen;

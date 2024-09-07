@@ -462,7 +462,6 @@ function offerScreen() {
         </div>
       </main>
     </div>
-
   );
 }
 

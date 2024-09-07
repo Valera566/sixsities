@@ -9,3 +9,4 @@ function App({ placeCardCount }: AppProps): JSX.Element {
 }
 
 export default App;
+

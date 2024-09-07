@@ -43,4 +43,5 @@ function PlaceCard(): JSX.Element {
   );
 }
 
+
 export default PlaceCard;
