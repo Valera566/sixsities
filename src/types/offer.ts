@@ -32,3 +32,22 @@ export type Offer = {
   title: string;
   type: string;
 };
+
+export type City = {
+  latitude: number;
+  longitude: number;
+  zoom: number;
+}
+
+export type Review = {
+  comment: string;
+  date: string;
+  id: number;
+  rating: number;
+  user: {
+    avatarUrl: string;
+    id: number;
+    name: string;
+    isPro: boolean;
+  };
+}

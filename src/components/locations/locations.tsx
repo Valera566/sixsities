@@ -1,41 +1,44 @@
 import {useState} from 'react';
 
-const locations = [
+enum Locations {
   'Paris',
   'Cologne',
   'Brussels',
   'Amsterdam',
   'Hamburg',
   'Dusseldorf',
-] as const;
+}
 
-type LocationType = (typeof locations)[number];
+function LocationsComponent() {
+  const [activeLocation, setActiveLocation ] = useState<Locations | null>(null);
 
-function Locations() {
-  const [activeLocation, setActiveLocation ] = useState<LocationType | null>(null);
-
-  const handleSetActiveLink = (location: LocationType) => {
+  const handleSetActiveLink = (location: Locations) => {
     setActiveLocation(location === activeLocation ? null : location);
   };
 
   return (
     <section className="locations container">
       <ul className="locations__list tabs__list">
-        {locations.map((location) => (
-          <li key={location} className="locations__item">
-            <a
-              className={`locations__item-link tabs__item ${
-                activeLocation === location ? 'tabs__item--active' : ''}`}
-              href="#"
-              onClick={() => handleSetActiveLink(location)}
-            >
-              <span>{location}</span>
-            </a>
-          </li>
-        ))}
+        {Object.values(Locations)
+          .filter((value) => typeof value === 'number')
+          .map((location) => {
+            const locationKey = location as Locations;
+            return (
+              <li key={locationKey} className="locations__item">
+                <a
+                  className={`locations__item-link tabs__item ${
+                    activeLocation === locationKey ? 'tabs__item--active' : ''}`}
+                  href="#"
+                  onClick={() => handleSetActiveLink(locationKey)}
+                >
+                  <span>{Locations[locationKey]}</span>
+                </a>
+              </li>
+            );
+          })}
       </ul>
     </section>
   );
 }
 
-export default Locations;
+export default LocationsComponent;
