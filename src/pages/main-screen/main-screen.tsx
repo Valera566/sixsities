@@ -1,7 +1,9 @@
 import PlaceCardList from '../../components/place-card-list/place-card-list.tsx';
-import {Offer} from '../../types/offer.ts';
-import {useState} from 'react';
+import { Offer } from '../../types/offer.ts';
+import { useState } from 'react';
 import Locations from '../../components/locations/locations.tsx';
+import Map from '../../components/map/map.tsx';
+import { CITY } from '../../mock/city.ts';
 
 type MainProps = {
   offers: Offer[];
@@ -9,6 +11,7 @@ type MainProps = {
 
 function MainScreen({ offers }: MainProps): JSX.Element {
   const [currentActiveCard, setActiveCard ] = useState<number | null>(null);
+
   return (
     <main className="page__main page__main--index">
       <h1 className="visually-hidden">Cities</h1>
@@ -51,13 +54,17 @@ function MainScreen({ offers }: MainProps): JSX.Element {
             </div>
           </section>
           <div className="cities__right-section">
-            <section className="cities__map map">{currentActiveCard}</section>
+            <Map
+              className={'cities__map'}
+              city={CITY}
+              placeLocationId={currentActiveCard}
+              offers={offers}
+            />
           </div>
         </div>
       </div>
     </main>
   );
 }
-
 
 export default MainScreen;
