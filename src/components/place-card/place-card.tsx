@@ -1,6 +1,7 @@
 import { Offer } from '../../types/offer.ts';
 import { Link } from 'react-router-dom';
 import { ratingOffers } from '../../utils/utils.ts';
+import cn from 'classnames';
 
 export type PlaceCardProps = {
   offer: Offer;
@@ -62,6 +63,15 @@ function PlaceCard({offer, setActiveCard, cardType = 'cities', onCardClick}: Pla
     }
   }
 
+  const infoClassName = cn({
+    'favorites__card-info': cardType === 'favorites',
+    'place-card__info': true,
+  });
+
+  const bookmarkButtonClass = cn('place-card__bookmark-button', 'button', {
+    'place-card__bookmark-button--active': isFavorite,
+  });
+
   return (
     <article
       className={`${articleClassName} place-card`}
@@ -85,19 +95,13 @@ function PlaceCard({offer, setActiveCard, cardType = 'cities', onCardClick}: Pla
           />
         </Link>
       </div>
-      <div className={`${
-        cardType === 'favorites' ? 'favorites__card-info' : ''
-      } place-card__info`}
-      >
+      <div className={infoClassName}>
         <div className="place-card__price-wrapper">
           <div className="place-card__price">
             <b className="place-card__price-value">€{price}</b>
             <span className="place-card__price-text">/&nbsp;night</span>
           </div>
-          <button className={`place-card__bookmark-button button ${
-            isFavorite ? 'place-card__bookmark-button--active' : ''
-          }`} type="button"
-          >
+          <button className={bookmarkButtonClass} type="button">
             <svg className="place-card__bookmark-icon" width={18} height={19}>
               <use xlinkHref="#icon-bookmark"/>
             </svg>

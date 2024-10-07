@@ -1,11 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import leafLet, { Map as LeafletMap } from 'leaflet';
-
-type City = {
-  latitude: number;
-  longitude: number;
-  zoom: number;
-};
+import { City } from '../types/offer.ts';
 
 type UseMapProps = {
   city: City;
@@ -26,10 +21,10 @@ function useMap({ city, mapRef }: UseMapProps) {
     if (mapRef.current !== null && !isRendered.current) {
       const instanse = leafLet.map(mapRef.current, {
         center: {
-          lat: city.latitude,
-          lng: city.longitude,
+          lat: city.location.latitude,
+          lng: city.location.longitude,
         },
-        zoom: city.zoom,
+        zoom: city.location.zoom,
       });
 
       leafLet

@@ -6,16 +6,13 @@ import { reviews } from '../../mock/reviews.ts';
 import OfferDescriptionList from '../../components/offer-description-list/offer-description-list.tsx';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
-import { Offer } from '../../types/offer.ts';
 import Map from '../../components/map/map.tsx';
-import { CITY } from '../../mock/city.ts';
 import NearPlaces from '../../components/near-places/near-places.tsx';
+import { useAppSelector } from '../../hooks';
 
-type PropertyProps = {
-  offers: Offer[];
-}
-
-function OfferScreen({ offers }: PropertyProps): JSX.Element {
+function OfferScreen(): JSX.Element {
+  const offers = useAppSelector((state) => state.offers);
+  const activeCity = useAppSelector((state) => state.city);
   const authorizationStatus = getAuthorizationStatus();
   const isAuth = authorizationStatus === AuthorizationStatus.Auth;
   const { id } = useParams<{ id: string }>();
@@ -91,7 +88,7 @@ function OfferScreen({ offers }: PropertyProps): JSX.Element {
         <section className="offer__map map">
           <Map
             className={'offer__map'}
-            city={CITY}
+            city={activeCity}
             offers={rentalOffersNearby}
             placeLocationId={currentActiveCard}
           />
