@@ -18,6 +18,9 @@ function OfferDescriptionList({ offer }: OfferDescriptionList) {
     bedrooms,
     maxAdults,
     price,
+    goods,
+    host,
+    description,
   } = offer;
 
   const bookmarkButtonClass = cn('offer__bookmark-button', 'button', {
@@ -82,16 +85,11 @@ function OfferDescriptionList({ offer }: OfferDescriptionList) {
       <div className="offer__inside">
         <h2 className="offer__inside-title">What&apos;s inside</h2>
         <ul className="offer__inside-list">
-          <li className="offer__inside-item">Wi-Fi</li>
-          <li className="offer__inside-item">Washing machine</li>
-          <li className="offer__inside-item">Towels</li>
-          <li className="offer__inside-item">Heating</li>
-          <li className="offer__inside-item">Coffee machine</li>
-          <li className="offer__inside-item">Baby seat</li>
-          <li className="offer__inside-item">Kitchen</li>
-          <li className="offer__inside-item">Dishwasher</li>
-          <li className="offer__inside-item">Cabel TV</li>
-          <li className="offer__inside-item">Fridge</li>
+          {goods.map((item) => (
+            <li key={item} className="offer__inside-item">
+              {item}
+            </li>
+          ))}
         </ul>
       </div>
       <div className="offer__host">
@@ -100,26 +98,19 @@ function OfferDescriptionList({ offer }: OfferDescriptionList) {
           <div className="offer__avatar-wrapper offer__avatar-wrapper--pro user__avatar-wrapper">
             <img
               className="offer__avatar user__avatar"
-              src="img/avatar-angelina.jpg"
+              src={host.avatarUrl}
               width={74}
               height={74}
               alt="Host avatar"
             />
           </div>
-          <span className="offer__user-name">Angelina</span>
-          <span className="offer__user-status">Pro</span>
+          <span className="offer__user-name">{host.name}</span>
+          <span className="offer__user-status">
+            {host.isPro ? 'Pro' : ''}
+          </span>
         </div>
         <div className="offer__description">
-          <p className="offer__text">
-            A quiet cozy and picturesque that hides behind a a river by the
-            unique lightness of Amsterdam. The building is green and from
-            18th century.
-          </p>
-          <p className="offer__text">
-            An independent House, strategically located between Rembrand
-            Square and National Opera, but where the bustle of the city
-            comes to rest in this alley flowery and colorful.
-          </p>
+          <p className="offer__text">{description}</p>
         </div>
       </div>
     </div>

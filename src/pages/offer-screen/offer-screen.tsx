@@ -9,6 +9,8 @@ import { useState } from 'react';
 import Map from '../../components/map/map.tsx';
 import NearPlaces from '../../components/near-places/near-places.tsx';
 import { useAppSelector } from '../../hooks';
+import OfferGallery from '../../components/offer-gallery/offer-gallery.tsx';
+import NotFoundScreen from '../not-found-screen/not-found-screen.tsx';
 
 function OfferScreen(): JSX.Element {
   const offers = useAppSelector((state) => state.offers);
@@ -23,58 +25,17 @@ function OfferScreen(): JSX.Element {
 
   const rentalOffersNearby = offers.filter((offer) => offer.id.toString() !== id);
 
+  if (!rentalOffer) {
+    return <NotFoundScreen />;
+  }
+
   return (
     <main className="page__main page__main--offer">
       <Helmet>
         <title>6 cities - Offer</title>
       </Helmet>
       <section className="offer">
-        <div className="offer__gallery-container container">
-          <div className="offer__gallery">
-            <div className="offer__image-wrapper">
-              <img
-                className="offer__image"
-                src="img/room.jpg"
-                alt="Photo studio"
-              />
-            </div>
-            <div className="offer__image-wrapper">
-              <img
-                className="offer__image"
-                src="img/apartment-01.jpg"
-                alt="Photo studio"
-              />
-            </div>
-            <div className="offer__image-wrapper">
-              <img
-                className="offer__image"
-                src="img/apartment-02.jpg"
-                alt="Photo studio"
-              />
-            </div>
-            <div className="offer__image-wrapper">
-              <img
-                className="offer__image"
-                src="img/apartment-03.jpg"
-                alt="Photo studio"
-              />
-            </div>
-            <div className="offer__image-wrapper">
-              <img
-                className="offer__image"
-                src="img/studio-01.jpg"
-                alt="Photo studio"
-              />
-            </div>
-            <div className="offer__image-wrapper">
-              <img
-                className="offer__image"
-                src="img/apartment-01.jpg"
-                alt="Photo studio"
-              />
-            </div>
-          </div>
-        </div>
+        <OfferGallery offer={rentalOffer}/>
         <div className="offer__container container">
           {rentalOffer ? <OfferDescriptionList offer={rentalOffer} /> : null}
           <section className="offer__reviews reviews">

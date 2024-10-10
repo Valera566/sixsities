@@ -1,12 +1,9 @@
 import {Helmet} from 'react-helmet-async';
-import {Offer} from '../../types/offer.ts';
 import PlaceCard from '../../components/place-card/place-card.tsx';
+import { useAppSelector } from '../../hooks';
 
-type FavoritesScreenProps = {
-  offers: Offer[];
-}
-
-function FavoritesScreen({ offers }: FavoritesScreenProps): JSX.Element {
+function FavoritesScreen(): JSX.Element {
+  const { offers } = useAppSelector((state) => state);
   const favoriteOffers = offers.filter((offer) => offer.isFavorite);
   const citiesFavoriteOffers = new Set(favoriteOffers.map((offer) => offer.city.name));
 
