@@ -9,15 +9,10 @@ import NotFoundScreen from '../../pages/not-found-screen/not-found-screen.tsx';
 import PrivateRoute from '../private-route/private-route.tsx';
 import Layout from '../layout/layout.tsx';
 import {getAuthorizationStatus} from '../../authorizationStatus.ts';
-import {Offer} from '../../types/offer.ts';
-
-type AppProps = {
-  offers: Offer[];
-};
 
 const authorizationStatus = getAuthorizationStatus();
 
-function App({ offers }: AppProps): JSX.Element {
+function App(): JSX.Element {
   return (
     <HelmetProvider>
       <BrowserRouter>
@@ -28,7 +23,7 @@ function App({ offers }: AppProps): JSX.Element {
           >
             <Route
               index
-              element={<MainScreen offers={offers} />}
+              element={<MainScreen />}
             />
             <Route
               path={AppRoute.Login}
@@ -42,13 +37,13 @@ function App({ offers }: AppProps): JSX.Element {
               path={AppRoute.Favorites}
               element={
                 <PrivateRoute authorizationStatus={authorizationStatus}>
-                  <FavoritesScreen offers={offers} />
+                  <FavoritesScreen />
                 </PrivateRoute>
               }
             />
             <Route
               path={AppRoute.Offer}
-              element={<OfferScreen offers={offers} />}
+              element={<OfferScreen />}
             />
             <Route
               path='*'

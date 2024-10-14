@@ -6,16 +6,15 @@ import { reviews } from '../../mock/reviews.ts';
 import OfferDescriptionList from '../../components/offer-description-list/offer-description-list.tsx';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
-import { Offer } from '../../types/offer.ts';
 import Map from '../../components/map/map.tsx';
-import { CITY } from '../../mock/city.ts';
 import NearPlaces from '../../components/near-places/near-places.tsx';
+import { useAppSelector } from '../../hooks';
+import OfferGallery from '../../components/offer-gallery/offer-gallery.tsx';
+import NotFoundScreen from '../not-found-screen/not-found-screen.tsx';
 
-type PropertyProps = {
-  offers: Offer[];
-}
-
-function OfferScreen({ offers }: PropertyProps): JSX.Element {
+function OfferScreen(): JSX.Element {
+  const offers = useAppSelector((state) => state.offers);
+  const activeCity = useAppSelector((state) => state.city);
   const authorizationStatus = getAuthorizationStatus();
   const isAuth = authorizationStatus === AuthorizationStatus.Auth;
   const { id } = useParams<{ id: string }>();
@@ -26,58 +25,17 @@ function OfferScreen({ offers }: PropertyProps): JSX.Element {
 
   const rentalOffersNearby = offers.filter((offer) => offer.id.toString() !== id);
 
+  if (!rentalOffer) {
+    return <NotFoundScreen />;
+  }
+
   return (
     <main className="page__main page__main--offer">
       <Helmet>
         <title>6 cities - Offer</title>
       </Helmet>
       <section className="offer">
-        <div className="offer__gallery-container container">
-          <div className="offer__gallery">
-            <div className="offer__image-wrapper">
-              <img
-                className="offer__image"
-                src="img/room.jpg"
-                alt="Photo studio"
-              />
-            </div>
-            <div className="offer__image-wrapper">
-              <img
-                className="offer__image"
-                src="img/apartment-01.jpg"
-                alt="Photo studio"
-              />
-            </div>
-            <div className="offer__image-wrapper">
-              <img
-                className="offer__image"
-                src="img/apartment-02.jpg"
-                alt="Photo studio"
-              />
-            </div>
-            <div className="offer__image-wrapper">
-              <img
-                className="offer__image"
-                src="img/apartment-03.jpg"
-                alt="Photo studio"
-              />
-            </div>
-            <div className="offer__image-wrapper">
-              <img
-                className="offer__image"
-                src="img/studio-01.jpg"
-                alt="Photo studio"
-              />
-            </div>
-            <div className="offer__image-wrapper">
-              <img
-                className="offer__image"
-                src="img/apartment-01.jpg"
-                alt="Photo studio"
-              />
-            </div>
-          </div>
-        </div>
+        <OfferGallery offer={rentalOffer}/>
         <div className="offer__container container">
           {rentalOffer ? <OfferDescriptionList offer={rentalOffer} /> : null}
           <section className="offer__reviews reviews">
@@ -91,7 +49,7 @@ function OfferScreen({ offers }: PropertyProps): JSX.Element {
         <section className="offer__map map">
           <Map
             className={'offer__map'}
-            city={CITY}
+            city={activeCity}
             offers={rentalOffersNearby}
             placeLocationId={currentActiveCard}
           />

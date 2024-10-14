@@ -1,5 +1,6 @@
 import { Offer } from '../../types/offer.ts';
 import { ratingOffers } from '../../utils/utils.ts';
+import cn from 'classnames';
 
 type OfferDescriptionList = {
   offer: Offer;
@@ -17,7 +18,29 @@ function OfferDescriptionList({ offer }: OfferDescriptionList) {
     bedrooms,
     maxAdults,
     price,
+    goods,
+    host,
+    description,
   } = offer;
+
+  const bookmarkButtonClass = cn('offer__bookmark-button', 'button', {
+    'place-card__bookmark-button--active': isFavorite,
+  });
+
+  const bookmarkIconClass = cn({
+    'place-card__bookmark-icon': isFavorite,
+    'offer__bookmark-icon': !isFavorite,
+  });
+
+  const ratingStyle = {width: `${ratingOffers(rating)}%`};
+
+  const bedroomText = bedrooms
+    ? `${bedrooms} ${bedrooms > 1 ? 'Bedrooms' : 'Bedroom'}`
+    : '1 Bedroom';
+
+  const maxAdultsText = `Max ${maxAdults
+    ? `${maxAdults} ${maxAdults > 1 ? 'adults' : 'adult'}`
+    : '2 adults'}`;
 
   return (
     <div key={id} className="offer__wrapper">
@@ -30,15 +53,9 @@ function OfferDescriptionList({ offer }: OfferDescriptionList) {
         <h1 className="offer__name">
           {title}
         </h1>
-        <button className={`offer__bookmark-button button ${
-          isFavorite ? 'place-card__bookmark-button--active' : ''
-        }`} type="button"
-        >
-          <svg className={`${
-            isFavorite ? 'place-card__bookmark-icon'
-              : 'offer__bookmark-icon'
-          }`}
-          width={31} height={33}
+        <button className={bookmarkButtonClass} type="button">
+          <svg className={bookmarkIconClass}
+            width={31} height={33}
           >
             <use xlinkHref="#icon-bookmark"/>
           </svg>
@@ -47,7 +64,7 @@ function OfferDescriptionList({ offer }: OfferDescriptionList) {
       </div>
       <div className="offer__rating rating">
         <div className="offer__stars rating__stars">
-          <span style={{width: `${ratingOffers(rating)}%`}}/>
+          <span style={ratingStyle}/>
           <span className="visually-hidden">Rating</span>
         </div>
         <span className="offer__rating-value rating__value">{rating}</span>
@@ -55,14 +72,10 @@ function OfferDescriptionList({ offer }: OfferDescriptionList) {
       <ul className="offer__features">
         <li className="offer__feature offer__feature--entire">{type}</li>
         <li className="offer__feature offer__feature--bedrooms">
-          {bedrooms
-            ? `${bedrooms} ${bedrooms > 1 ? 'Bedrooms' : 'Bedroom'}`
-            : '1 Bedroom'}
+          {bedroomText}
         </li>
         <li className="offer__feature offer__feature--adults">
-          {`Max ${maxAdults
-            ? `${maxAdults} ${maxAdults > 1 ? 'adults' : 'adult'}`
-            : '2 adults'}`}
+          {maxAdultsText}
         </li>
       </ul>
       <div className="offer__price">
@@ -72,16 +85,11 @@ function OfferDescriptionList({ offer }: OfferDescriptionList) {
       <div className="offer__inside">
         <h2 className="offer__inside-title">What&apos;s inside</h2>
         <ul className="offer__inside-list">
-          <li className="offer__inside-item">Wi-Fi</li>
-          <li className="offer__inside-item">Washing machine</li>
-          <li className="offer__inside-item">Towels</li>
-          <li className="offer__inside-item">Heating</li>
-          <li className="offer__inside-item">Coffee machine</li>
-          <li className="offer__inside-item">Baby seat</li>
-          <li className="offer__inside-item">Kitchen</li>
-          <li className="offer__inside-item">Dishwasher</li>
-          <li className="offer__inside-item">Cabel TV</li>
-          <li className="offer__inside-item">Fridge</li>
+          {goods.map((item) => (
+            <li key={item} className="offer__inside-item">
+              {item}
+            </li>
+          ))}
         </ul>
       </div>
       <div className="offer__host">
@@ -90,26 +98,19 @@ function OfferDescriptionList({ offer }: OfferDescriptionList) {
           <div className="offer__avatar-wrapper offer__avatar-wrapper--pro user__avatar-wrapper">
             <img
               className="offer__avatar user__avatar"
-              src="img/avatar-angelina.jpg"
+              src={host.avatarUrl}
               width={74}
               height={74}
               alt="Host avatar"
             />
           </div>
-          <span className="offer__user-name">Angelina</span>
-          <span className="offer__user-status">Pro</span>
+          <span className="offer__user-name">{host.name}</span>
+          <span className="offer__user-status">
+            {host.isPro ? 'Pro' : ''}
+          </span>
         </div>
         <div className="offer__description">
-          <p className="offer__text">
-            A quiet cozy and picturesque that hides behind a a river by the
-            unique lightness of Amsterdam. The building is green and from
-            18th century.
-          </p>
-          <p className="offer__text">
-            An independent House, strategically located between Rembrand
-            Square and National Opera, but where the bustle of the city
-            comes to rest in this alley flowery and colorful.
-          </p>
+          <p className="offer__text">{description}</p>
         </div>
       </div>
     </div>

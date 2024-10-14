@@ -34,9 +34,12 @@ export type Offer = {
 };
 
 export type City = {
-  latitude: number;
-  longitude: number;
-  zoom: number;
+  location: {
+    latitude: number;
+    longitude: number;
+    zoom: number;
+  };
+  name: string;
 }
 
 export type Review = {
