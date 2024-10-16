@@ -4,12 +4,22 @@ import Locations from '../../components/locations/locations.tsx';
 import Map from '../../components/map/map.tsx';
 import { useAppSelector } from '../../hooks';
 import SortingOptions from '../../components/sorting-options/sortingOptions.tsx';
+import Spinner from '../../components/spinner/spinner.tsx';
 
 function MainScreen(): JSX.Element {
   const storeOffers = useAppSelector((state) => state.offers);
   const activeCity = useAppSelector((state) => state.city);
   const offers = storeOffers.filter((offer) => offer.city.name === activeCity.name);
   const [currentActiveCard, setActiveCard ] = useState<number | null>(null);
+  const isOffersLoading = useAppSelector((state) => state.isLoading);
+
+  if (isOffersLoading) {
+    return (
+      <div className={'page page--gray page--main'}>
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <main className="page__main page__main--index">
