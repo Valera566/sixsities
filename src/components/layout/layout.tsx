@@ -1,12 +1,14 @@
 import {AppRoute, AuthorizationStatus} from '../../const';
-import {Outlet, useLocation} from 'react-router-dom';
-import {getAuthorizationStatus} from '../../authorizationStatus';
+import {Link, Outlet, useLocation} from 'react-router-dom';
+import { getAuthorizationStatus } from '../../store/selectors.ts';
+import {useAppDispatch, useAppSelector} from '../../hooks';
+import {logoutAction} from '../../store/api-actions.ts';
 
 const getLayoutState = (pathname: AppRoute) => {
   let rootClassName = '';
   let linkClassName = '';
   let shouldRenderUser = true;
-  let shoudRenderFooter = false;
+  let shouldRenderFooter = false;
 
   if (pathname === AppRoute.Root) {
     rootClassName = ' page--gray page--main';
@@ -15,16 +17,17 @@ const getLayoutState = (pathname: AppRoute) => {
     rootClassName = ' page--gray page--login';
     shouldRenderUser = false;
   } else if (pathname === AppRoute.Favorites) {
-    shoudRenderFooter = true;
+    shouldRenderFooter = true;
   }
 
-  return {rootClassName, linkClassName, shouldRenderUser, shoudRenderFooter};
+  return {rootClassName, linkClassName, shouldRenderUser, shouldRenderFooter};
 };
 
 export default function Layout() {
   const {pathname} = useLocation();
-  const {rootClassName, linkClassName, shouldRenderUser, shoudRenderFooter} = getLayoutState(pathname as AppRoute);
-  const authorizationStatus = getAuthorizationStatus();
+  const {rootClassName, linkClassName, shouldRenderUser, shouldRenderFooter} = getLayoutState(pathname as AppRoute);
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
+  const dispatch = useAppDispatch();
 
   return (
     <div className={`page${rootClassName}`}>
@@ -47,9 +50,9 @@ export default function Layout() {
                 <nav className="header__nav">
                   <ul className="header__nav-list">
                     <li className="header__nav-item user">
-                      <a
+                      <Link
                         className="header__nav-link header__nav-link--profile"
-                        href="#"
+                        to={AppRoute.Login}
                       >
                         <div className="header__avatar-wrapper user__avatar-wrapper"></div>
                         {authorizationStatus === AuthorizationStatus.Auth ? (
@@ -58,13 +61,20 @@ export default function Layout() {
                             <span className="header__favorite-count">3</span>
                           </>
                         ) : <span className="header__login">Sign in</span>}
-                      </a>
+                      </Link>
                     </li>
                     {authorizationStatus === AuthorizationStatus.Auth ? (
                       <li className="header__nav-item">
-                        <a className="header__nav-link" href="#">
+                        <Link
+                          className="header__nav-link"
+                          to={AppRoute.Root}
+                          onClick={(evt) => {
+                            evt.preventDefault();
+                            dispatch(logoutAction());
+                          }}
+                        >
                           <span className="header__signout">Sign out</span>
-                        </a>
+                        </Link>
                       </li>
                     ) : null}
                   </ul>
@@ -75,7 +85,7 @@ export default function Layout() {
         </div>
       </header>
       <Outlet/>
-      {shoudRenderFooter ? (
+      {shouldRenderFooter ? (
         <footer className="footer container">
           <a className="footer__logo-link" href="main.html">
             <img

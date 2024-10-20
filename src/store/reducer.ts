@@ -5,7 +5,7 @@ import {
   setSortType,
   getOffers,
   requireAuthorization,
-  setDataLoadingStatus,
+  setIsLoadingStatus,
 } from './action.ts';
 
 import { SortOption, AuthorizationStatus } from '../const.ts';
@@ -30,7 +30,7 @@ const initialState: InitialState = {
   offers: [],
   sortType: SortOption.popular,
   authorizationStatus: AuthorizationStatus.Unknown,
-  isLoading: true,
+  isLoading: false,
 };
 
 const reducer = createReducer(initialState, (builder) => {
@@ -49,8 +49,8 @@ const reducer = createReducer(initialState, (builder) => {
     .addCase(getOffers, (state, action) => {
       state.offers = action.payload.offers;
     })
-    .addCase(setDataLoadingStatus, (state, action) => {
-      state.isLoading = action.payload.isDataloaded;
+    .addCase(setIsLoadingStatus, (state, action) => {
+      state.isLoading = action.payload.isLoading;
     });
 });
 

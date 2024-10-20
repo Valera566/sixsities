@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { Reviews } from '../../components/review/review.tsx';
-import { getAuthorizationStatus } from '../../authorizationStatus.ts';
+import { getAuthorizationStatus } from '../../store/selectors.ts';
 import { AuthorizationStatus } from '../../const.ts';
 import { reviews } from '../../mock/reviews.ts';
 import OfferDescriptionList from '../../components/offer-description-list/offer-description-list.tsx';
@@ -15,7 +15,7 @@ import NotFoundScreen from '../not-found-screen/not-found-screen.tsx';
 function OfferScreen(): JSX.Element {
   const offers = useAppSelector((state) => state.offers);
   const activeCity = useAppSelector((state) => state.city);
-  const authorizationStatus = getAuthorizationStatus();
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const isAuth = authorizationStatus === AuthorizationStatus.Auth;
   const { id } = useParams<{ id: string }>();
 

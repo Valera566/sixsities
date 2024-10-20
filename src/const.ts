@@ -21,5 +21,10 @@ export enum SortOption {
 export enum APIRoute {
   Offers = '/hotels',
   Favorites = '/favorite',
-  Login = 'login',
+  Login = '/login',
+  Logout = '/logout',
+}
+
+export type ErrorResponse = {
+  error?: string | undefined;
 }
