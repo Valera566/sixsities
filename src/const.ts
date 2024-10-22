@@ -19,10 +19,11 @@ export enum SortOption {
 }
 
 export enum APIRoute {
-  Offers = '/hotels',
+  Offers = '/offers',
   Favorites = '/favorite',
   Login = '/login',
   Logout = '/logout',
+  Reviews = '/comments',
 }
 
 export type ErrorResponse = {

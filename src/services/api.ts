@@ -3,7 +3,7 @@ import { getToken } from './token.ts';
 import { ErrorResponse } from '../const.ts';
 import { toast } from 'react-toastify';
 
-const BASE_URL = 'https://15.design.htmlacademy.pro/six-cities';
+const BASE_URL = 'https://16.design.htmlacademy.pro/six-cities';
 const REQUEST_TIMEOUT = 5000;
 
 export const createAPI = (): AxiosInstance => {

@@ -1,4 +1,4 @@
-import { City, Offer } from '../types/offer.ts';
+import { City, Offer, Review } from '../types/offer.ts';
 import { createReducer } from '@reduxjs/toolkit';
 import {
   changeCity,
@@ -6,6 +6,9 @@ import {
   getOffers,
   requireAuthorization,
   setIsLoadingStatus,
+  getOfferById,
+  getOffersNearby,
+  getReviewsById,
 } from './action.ts';
 
 import { SortOption, AuthorizationStatus } from '../const.ts';
@@ -13,6 +16,9 @@ import { SortOption, AuthorizationStatus } from '../const.ts';
 type InitialState = {
   city: City;
   offers: Offer[];
+  offerById: Offer | null;
+  offersNearby: Offer[];
+  reviews: Review[];
   sortType: SortOption;
   authorizationStatus: AuthorizationStatus;
   isLoading: boolean;
@@ -28,6 +34,9 @@ const initialState: InitialState = {
     },
   },
   offers: [],
+  offerById: null,
+  offersNearby: [],
+  reviews: [],
   sortType: SortOption.popular,
   authorizationStatus: AuthorizationStatus.Unknown,
   isLoading: false,
@@ -48,6 +57,15 @@ const reducer = createReducer(initialState, (builder) => {
     })
     .addCase(getOffers, (state, action) => {
       state.offers = action.payload.offers;
+    })
+    .addCase(getOfferById, (state, action) => {
+      state.offerById = action.payload.offer;
+    })
+    .addCase(getOffersNearby, (state, action) => {
+      state.offersNearby = action.payload.offersNearby;
+    })
+    .addCase(getReviewsById, (state, action) => {
+      state.reviews = action.payload.reviews;
     })
     .addCase(setIsLoadingStatus, (state, action) => {
       state.isLoading = action.payload.isLoading;

@@ -38,6 +38,10 @@ function useMap({ city, mapRef }: UseMapProps) {
     }
   }, [mapRef, city]);
 
+  if (map) {
+    map.setView([city.location.latitude, city.location.longitude], city.location.zoom);
+  }
+
   return map;
 }
 

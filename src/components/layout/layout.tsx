@@ -35,7 +35,7 @@ export default function Layout() {
         <div className="container">
           <div className="header__wrapper">
             <div className="header__left">
-              <a className={`header__logo-link${linkClassName}`} >
+              <a className={`header__logo-link${linkClassName}`} href="/" >
                 <img
                   className="header__logo"
                   src="img/logo.svg"
@@ -68,8 +68,7 @@ export default function Layout() {
                         <Link
                           className="header__nav-link"
                           to={AppRoute.Root}
-                          onClick={(evt) => {
-                            evt.preventDefault();
+                          onClick={() => {
                             dispatch(logoutAction());
                           }}
                         >

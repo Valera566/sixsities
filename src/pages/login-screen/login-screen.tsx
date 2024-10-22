@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { getAuthorizationStatus } from '../../store/selectors.ts';
 import { FormEvent, useEffect, useRef } from 'react';
 import { AuthData } from '../../types/auth-data.ts';
-import { loginAction} from '../../store/api-actions.ts';
+import { loginAction } from '../../store/api-actions.ts';
 import { toast } from 'react-toastify';
 
 function LoginScreen() {
@@ -22,6 +22,7 @@ function LoginScreen() {
   };
 
   useEffect(() => {
+    console.log('authorizationStatus changed:', authorizationStatus);
     handleRedirectToMainPage();
   }, [authorizationStatus]);
 
