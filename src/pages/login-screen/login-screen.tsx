@@ -22,7 +22,6 @@ function LoginScreen() {
   };
 
   useEffect(() => {
-    console.log('authorizationStatus changed:', authorizationStatus);
     handleRedirectToMainPage();
   }, [authorizationStatus]);
 
