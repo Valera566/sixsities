@@ -1,32 +1,48 @@
 import { Helmet } from 'react-helmet-async';
 import { Reviews } from '../../components/review/review.tsx';
-import { getAuthorizationStatus } from '../../authorizationStatus.ts';
-import { AuthorizationStatus } from '../../const.ts';
-import { reviews } from '../../mock/reviews.ts';
 import OfferDescriptionList from '../../components/offer-description-list/offer-description-list.tsx';
 import { useParams } from 'react-router-dom';
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import Map from '../../components/map/map.tsx';
 import NearPlaces from '../../components/near-places/near-places.tsx';
-import { useAppSelector } from '../../hooks';
+import { useAppSelector, useAppDispatch } from '../../hooks';
 import OfferGallery from '../../components/offer-gallery/offer-gallery.tsx';
 import NotFoundScreen from '../not-found-screen/not-found-screen.tsx';
+import {
+  getOfferByIdAction,
+  getOffersNearbyAction,
+  getReviewsByIdAction
+} from '../../store/api-actions.ts';
+import Spinner from '../../components/spinner/spinner.tsx';
 
 function OfferScreen(): JSX.Element {
-  const offers = useAppSelector((state) => state.offers);
+  const dispatch = useAppDispatch();
   const activeCity = useAppSelector((state) => state.city);
-  const authorizationStatus = getAuthorizationStatus();
-  const isAuth = authorizationStatus === AuthorizationStatus.Auth;
+
+
   const { id } = useParams<{ id: string }>();
+  const reviews = useAppSelector((state) => state.reviews);
 
   const [currentActiveCard, setActiveCard] = useState<number | null>(null);
 
-  const rentalOffer = offers.find((offer) => offer.id.toString() === id);
+  const rentalOffer = useAppSelector((state) => state.offerById);
+  const isOffersLoading = useAppSelector((state) => state.isLoading);
+  const rentalOffersNearby = useAppSelector((state) => state.offersNearby);
 
-  const rentalOffersNearby = offers.filter((offer) => offer.id.toString() !== id);
+  useEffect(() => {
+    if (id) {
+      dispatch(getOfferByIdAction(id));
+      dispatch(getOffersNearbyAction(id));
+      dispatch(getReviewsByIdAction(id));
+    }
+  }, [id, dispatch]);
 
   if (!rentalOffer) {
     return <NotFoundScreen />;
+  }
+
+  if (isOffersLoading) {
+    return <Spinner />;
   }
 
   return (
@@ -42,7 +58,7 @@ function OfferScreen(): JSX.Element {
             <h2 className="reviews__title">
                   Reviews · <span className="reviews__amount">{reviews.length}</span>
             </h2>
-            <Reviews isAuth={isAuth} reviews={reviews} offerId={id} />
+            <Reviews />
           </section>
 
         </div>

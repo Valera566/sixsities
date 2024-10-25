@@ -1,15 +1,31 @@
 import PlaceCardList from '../../components/place-card-list/place-card-list.tsx';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Locations from '../../components/locations/locations.tsx';
 import Map from '../../components/map/map.tsx';
-import { useAppSelector } from '../../hooks';
+import { useAppSelector, useAppDispatch } from '../../hooks';
 import SortingOptions from '../../components/sorting-options/sortingOptions.tsx';
+import Spinner from '../../components/spinner/spinner.tsx';
+import { getOffersActions } from '../../store/api-actions.ts';
 
 function MainScreen(): JSX.Element {
   const storeOffers = useAppSelector((state) => state.offers);
   const activeCity = useAppSelector((state) => state.city);
   const offers = storeOffers.filter((offer) => offer.city.name === activeCity.name);
   const [currentActiveCard, setActiveCard ] = useState<number | null>(null);
+  const isOffersLoading = useAppSelector((state) => state.isLoading);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(getOffersActions());
+  }, [dispatch]);
+
+  if (isOffersLoading) {
+    return (
+      <div className={'page page--gray page--main'}>
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <main className="page__main page__main--index">

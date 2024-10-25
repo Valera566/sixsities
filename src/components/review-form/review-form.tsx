@@ -1,4 +1,7 @@
 import {Fragment, useState} from 'react';
+import {useParams} from 'react-router-dom';
+import {getReviewsByIdAction, postReviewAction} from '../../store/api-actions.ts';
+import {useAppDispatch} from '../../hooks';
 
 type ChangeHandler = React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
 
@@ -18,8 +21,20 @@ export const ReviewForm = () => {
     setReview({...review, [name]: value});
   };
 
+  const { id } = useParams<{ id: string }>();
+  const dispatch = useAppDispatch();
+
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
+    event.preventDefault();
+    if (id) {
+      dispatch(postReviewAction([{ comment: review.review, rating: review.rating }, id]));
+      dispatch(getReviewsByIdAction(id));
+      setReview({rating: 0, review: ''});
+    }
+  };
+
   return (
-    <form className="reviews__form form" action="#" method="post">
+    <form className="reviews__form form" action="#" method="post" onSubmit={handleSubmit}>
       <label className="reviews__label form__label" htmlFor="review">
       Your review
       </label>

@@ -17,3 +17,15 @@ export enum SortOption {
   priceHighToLow = 'Price: high to low',
   topRatedFirst = 'Top rated first'
 }
+
+export enum APIRoute {
+  Offers = '/offers',
+  Favorites = '/favorite',
+  Login = '/login',
+  Logout = '/logout',
+  Reviews = '/comments',
+}
+
+export type ErrorResponse = {
+  error?: string | undefined;
+}

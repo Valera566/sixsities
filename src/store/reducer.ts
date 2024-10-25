@@ -1,13 +1,27 @@
-import { City, Offer } from '../types/offer.ts';
+import { City, Offer, Review } from '../types/offer.ts';
 import { createReducer } from '@reduxjs/toolkit';
-import {changeCity, setSortType} from './action.ts';
-import { mockOfferData } from '../mock/offers.ts';
-import { SortOption } from '../const.ts';
+import {
+  changeCity,
+  setSortType,
+  getOffers,
+  requireAuthorization,
+  setIsLoadingStatus,
+  getOfferById,
+  getOffersNearby,
+  getReviewsById,
+} from './action.ts';
+
+import { SortOption, AuthorizationStatus } from '../const.ts';
 
 type InitialState = {
   city: City;
   offers: Offer[];
+  offerById: Offer | null;
+  offersNearby: Offer[];
+  reviews: Review[];
   sortType: SortOption;
+  authorizationStatus: AuthorizationStatus;
+  isLoading: boolean;
 }
 
 const initialState: InitialState = {
@@ -19,8 +33,13 @@ const initialState: InitialState = {
       zoom: 13,
     },
   },
-  offers: mockOfferData,
+  offers: [],
+  offerById: null,
+  offersNearby: [],
+  reviews: [],
   sortType: SortOption.popular,
+  authorizationStatus: AuthorizationStatus.Unknown,
+  isLoading: false,
 };
 
 const reducer = createReducer(initialState, (builder) => {
@@ -32,6 +51,24 @@ const reducer = createReducer(initialState, (builder) => {
     })
     .addCase(setSortType, (state, action) => {
       state.sortType = action.payload.sortType as SortOption;
+    })
+    .addCase(requireAuthorization, (state, action) => {
+      state.authorizationStatus = action.payload;
+    })
+    .addCase(getOffers, (state, action) => {
+      state.offers = action.payload.offers;
+    })
+    .addCase(getOfferById, (state, action) => {
+      state.offerById = action.payload.offer;
+    })
+    .addCase(getOffersNearby, (state, action) => {
+      state.offersNearby = action.payload.offersNearby;
+    })
+    .addCase(getReviewsById, (state, action) => {
+      state.reviews = action.payload.reviews;
+    })
+    .addCase(setIsLoadingStatus, (state, action) => {
+      state.isLoading = action.payload.isLoading;
     });
 });
 
