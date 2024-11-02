@@ -29,3 +29,37 @@ export enum APIRoute {
 export type ErrorResponse = {
   error?: string | undefined;
 }
+
+export enum NameSpace {
+  Data = 'DATA',
+  App = 'APP',
+  User = 'USER',
+}
+
+export const REVIEW_RATING = [
+  {
+    title: 'perfect',
+    value: 5,
+  },
+  {
+    title: 'good',
+    value: 4,
+  },
+  {
+    title: 'not bad',
+    value: 3,
+  },
+  {
+    title: 'badly',
+    value: 2,
+  },
+  {
+    title: 'terribly',
+    value: 1,
+  },
+];
+
+export enum FavoriteStatus {
+  Favorite = 1,
+  NotFavorite = 0,
+}

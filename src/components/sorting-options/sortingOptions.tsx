@@ -1,17 +1,18 @@
-import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { setSortType } from '../../store/action.ts';
 import { SortOption } from '../../const.ts';
 import cn from 'classnames';
+import React, { useState } from 'react';
+import { getSortType } from '../../store/app-process/selectors.ts';
+import { setSortType } from '../../store/app-process/app-process.ts';
 
 function SortingOptions() {
   const dispatch = useAppDispatch();
-  const sortType = useAppSelector((state) => state.sortType);
+  const sortType = useAppSelector(getSortType);
 
   const [placesOptionActive, setPlacesOptionActive] = useState(false);
 
   const handleSortOptionClick = (selectedSortType: SortOption) => {
-    dispatch(setSortType({ sortType: selectedSortType }));
+    dispatch(setSortType(selectedSortType));
     setPlacesOptionActive(false);
   };
 
@@ -55,4 +56,4 @@ function SortingOptions() {
   );
 }
 
-export default SortingOptions;
+export default React.memo(SortingOptions);

@@ -1,14 +1,17 @@
 import {AppRoute, AuthorizationStatus} from '../../const';
 import {Link, Outlet, useLocation} from 'react-router-dom';
-import { getAuthorizationStatus } from '../../store/selectors.ts';
+import { getAuthorizationStatus } from '../../store/user-process/selectors.ts';
 import {useAppDispatch, useAppSelector} from '../../hooks';
 import {logoutAction} from '../../store/api-actions.ts';
+import { getUserData } from '../../store/user-process/selectors.ts';
+import {getFavorites} from '../../store/app-data/selectors.ts';
 
 const getLayoutState = (pathname: AppRoute) => {
   let rootClassName = '';
   let linkClassName = '';
   let shouldRenderUser = true;
   let shouldRenderFooter = false;
+
 
   if (pathname === AppRoute.Root) {
     rootClassName = ' page--gray page--main';
@@ -23,11 +26,14 @@ const getLayoutState = (pathname: AppRoute) => {
   return {rootClassName, linkClassName, shouldRenderUser, shouldRenderFooter};
 };
 
+
 export default function Layout() {
   const {pathname} = useLocation();
   const {rootClassName, linkClassName, shouldRenderUser, shouldRenderFooter} = getLayoutState(pathname as AppRoute);
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const dispatch = useAppDispatch();
+  const favoriteCount = useAppSelector(getFavorites);
+  const { email , avatarUrl } = useAppSelector(getUserData);
 
   return (
     <div className={`page${rootClassName}`}>
@@ -52,22 +58,27 @@ export default function Layout() {
                     <li className="header__nav-item user">
                       <Link
                         className="header__nav-link header__nav-link--profile"
-                        to={AppRoute.Login}
+                        to={AppRoute.Favorites}
                       >
-                        <div className="header__avatar-wrapper user__avatar-wrapper"></div>
+                        <div
+                          className="header__avatar-wrapper user__avatar-wrapper"
+                          style={{ backgroundImage: `url("${avatarUrl}")`, borderRadius: '50%' }}
+                        />
                         {authorizationStatus === AuthorizationStatus.Auth ? (
                           <>
-                            <span className="header__user-name user__name">Oliver.conner@gmail.com</span>
-                            <span className="header__favorite-count">3</span>
+                            <span className="header__user-name user__name">{email}</span>
+
+                            <span className="header__favorite-count">{favoriteCount.length}</span>
                           </>
                         ) : <span className="header__login">Sign in</span>}
                       </Link>
+
                     </li>
                     {authorizationStatus === AuthorizationStatus.Auth ? (
                       <li className="header__nav-item">
                         <Link
                           className="header__nav-link"
-                          to={AppRoute.Root}
+                          to={AppRoute.Login}
                           onClick={() => {
                             dispatch(logoutAction());
                           }}

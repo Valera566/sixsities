@@ -1,35 +1,41 @@
-import {Fragment, useState} from 'react';
+import {useCallback, useState} from 'react';
 import {useParams} from 'react-router-dom';
 import {getReviewsByIdAction, postReviewAction} from '../../store/api-actions.ts';
 import {useAppDispatch} from '../../hooks';
-
-type ChangeHandler = React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
-
-const rating = [
-  {value: 5, label: 'perfect'},
-  {value: 4, label: 'good'},
-  {value: 3, label: 'not bad'},
-  {value: 2, label: 'badly'},
-  {value: 1, label: 'terribly'}
-];
+import ReviewRating from '../review-rating/review-rating.tsx';
 
 export const ReviewForm = () => {
-  const [review, setReview] = useState({rating: 0, review: ''});
-
-  const handleChange: ChangeHandler = (event) => {
-    const { name, value } = event.currentTarget;
-    setReview({...review, [name]: value});
-  };
-
   const { id } = useParams<{ id: string }>();
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const minCommentLength = 50;
   const dispatch = useAppDispatch();
 
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
+  const handleRatingChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = Number(e.target.value);
+      setRating(value);
+    },
+    []
+  );
+
+  const handleCommentChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const value = e.target.value;
+      setComment(value);
+    },
+    []
+  );
+
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> | undefined = (
+    event
+  ) => {
     event.preventDefault();
     if (id) {
-      dispatch(postReviewAction([{ comment: review.review, rating: review.rating }, id]));
+      dispatch(postReviewAction([{ comment, rating }, id]));
       dispatch(getReviewsByIdAction(id));
-      setReview({rating: 0, review: ''});
+      setComment('');
+      setRating(0);
     }
   };
 
@@ -38,36 +44,14 @@ export const ReviewForm = () => {
       <label className="reviews__label form__label" htmlFor="review">
       Your review
       </label>
-      <div className="reviews__rating-form form__rating">
-        {rating.map(({value, label}) => (
-          <Fragment key={value}>
-            <input
-              className="form__rating-input visually-hidden"
-              name="rating"
-              defaultValue={value}
-              id={`${value}-stars`}
-              type="radio"
-              onChange={handleChange}
-            />
-            <label
-              htmlFor={`${value}-stars`}
-              className="reviews__rating-label form__rating-label"
-              title={label}
-            >
-              <svg className="form__star-image" width={37} height={33}>
-                <use xlinkHref="#icon-star"/>
-              </svg>
-            </label>
-          </Fragment>
-        ))}
-      </div>
+      <ReviewRating rating={rating} handleRatingChange={handleRatingChange} />
       <textarea
         className="reviews__textarea form__textarea"
         id="review"
         name="review"
         placeholder="Tell how was your stay, what you like and what can be improved"
-        defaultValue={''}
-        onChange={handleChange}
+        value={comment}
+        onChange={handleCommentChange}
       />
       <div className="reviews__button-wrapper">
         <p className="reviews__help">
@@ -79,7 +63,7 @@ export const ReviewForm = () => {
         <button
           className="reviews__submit form__submit button"
           type="submit"
-          disabled={review.review.length < 50 || review.rating === 0}
+          disabled={comment.length < minCommentLength || rating === 0}
         >
         Submit
         </button>

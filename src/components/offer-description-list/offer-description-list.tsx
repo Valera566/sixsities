@@ -1,12 +1,14 @@
 import { Offer } from '../../types/offer.ts';
 import { ratingOffers } from '../../utils/utils.ts';
 import cn from 'classnames';
+import React from 'react';
 
 type OfferDescriptionList = {
   offer: Offer;
+  onSetFavorite: (isFavorite: boolean, offerId: number) => void;
 }
 
-function OfferDescriptionList({ offer }: OfferDescriptionList) {
+function OfferDescriptionList({ offer, onSetFavorite }: OfferDescriptionList) {
 
   const {
     id,
@@ -53,7 +55,7 @@ function OfferDescriptionList({ offer }: OfferDescriptionList) {
         <h1 className="offer__name">
           {title}
         </h1>
-        <button className={bookmarkButtonClass} type="button">
+        <button className={bookmarkButtonClass} type="button" onClick={() =>onSetFavorite(isFavorite, id)}>
           <svg className={bookmarkIconClass}
             width={31} height={33}
           >
@@ -117,4 +119,4 @@ function OfferDescriptionList({ offer }: OfferDescriptionList) {
   );
 }
 
-export default OfferDescriptionList;
+export default React.memo(OfferDescriptionList);

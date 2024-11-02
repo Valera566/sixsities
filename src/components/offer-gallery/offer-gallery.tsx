@@ -1,4 +1,5 @@
 import { Offer } from '../../types/offer.ts';
+import React from 'react';
 
 type OfferGalleryProps = {
   offer?: Offer;
@@ -24,4 +25,4 @@ function OfferGallery({ offer }: OfferGalleryProps): JSX.Element {
   );
 }
 
-export default OfferGallery;
+export default React.memo(OfferGallery);

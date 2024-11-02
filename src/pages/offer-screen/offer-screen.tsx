@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
-import { Reviews } from '../../components/review/review.tsx';
+import Reviews from '../../components/review/review.tsx';
 import OfferDescriptionList from '../../components/offer-description-list/offer-description-list.tsx';
-import { useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {useEffect, useState} from 'react';
 import Map from '../../components/map/map.tsx';
 import NearPlaces from '../../components/near-places/near-places.tsx';
@@ -11,23 +11,27 @@ import NotFoundScreen from '../not-found-screen/not-found-screen.tsx';
 import {
   getOfferByIdAction,
   getOffersNearbyAction,
-  getReviewsByIdAction
+  getReviewsByIdAction, postFavoriteAction
 } from '../../store/api-actions.ts';
 import Spinner from '../../components/spinner/spinner.tsx';
+import { getCurrentCity } from '../../store/app-process/selectors.ts';
+import {getCurrentOffer, getOffersNearby, getLoadingStatus, getReviews} from '../../store/app-data/selectors.ts';
+import {toast} from 'react-toastify';
+import {APIRoute, FavoriteStatus} from '../../const.ts';
+import {getAuthorizationStatus, getIsUserAuthenticated} from '../../store/user-process/selectors.ts';
 
 function OfferScreen(): JSX.Element {
   const dispatch = useAppDispatch();
-  const activeCity = useAppSelector((state) => state.city);
-
-
+  const activeCity = useAppSelector(getCurrentCity);
   const { id } = useParams<{ id: string }>();
-  const reviews = useAppSelector((state) => state.reviews);
-
+  const reviews = useAppSelector(getReviews);
   const [currentActiveCard, setActiveCard] = useState<number | null>(null);
-
-  const rentalOffer = useAppSelector((state) => state.offerById);
-  const isOffersLoading = useAppSelector((state) => state.isLoading);
-  const rentalOffersNearby = useAppSelector((state) => state.offersNearby);
+  const rentalOffer = useAppSelector(getCurrentOffer);
+  const isOffersLoading = useAppSelector(getLoadingStatus);
+  const rentalOffersNearby = useAppSelector(getOffersNearby);
+  const isUserLoggedIn = useAppSelector(getIsUserAuthenticated);
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (id) {
@@ -35,15 +39,32 @@ function OfferScreen(): JSX.Element {
       dispatch(getOffersNearbyAction(id));
       dispatch(getReviewsByIdAction(id));
     }
-  }, [id, dispatch]);
+  }, [id, authorizationStatus]);
 
   if (!rentalOffer) {
     return <NotFoundScreen />;
   }
 
   if (isOffersLoading) {
-    return <Spinner />;
+    return (
+      <div className="offer__container container">
+        <Spinner/>;
+      </div>
+    );
   }
+
+  const toggleFavoriteStatus = (isFavorite: boolean, offerId: number) => {
+    if (!isUserLoggedIn) {
+      toast.warn('You must log in or register to add to favorites.');
+      navigate(APIRoute.Login);
+    } else {
+      const newFavoriteStatus = isFavorite
+        ? FavoriteStatus.NotFavorite
+        : FavoriteStatus.Favorite;
+
+      dispatch(postFavoriteAction([newFavoriteStatus, offerId]));
+    }
+  };
 
   return (
     <main className="page__main page__main--offer">
@@ -53,12 +74,12 @@ function OfferScreen(): JSX.Element {
       <section className="offer">
         <OfferGallery offer={rentalOffer}/>
         <div className="offer__container container">
-          {rentalOffer ? <OfferDescriptionList offer={rentalOffer} /> : null}
+          {rentalOffer ? <OfferDescriptionList offer={rentalOffer} onSetFavorite={toggleFavoriteStatus}/> : null}
           <section className="offer__reviews reviews">
             <h2 className="reviews__title">
-                  Reviews · <span className="reviews__amount">{reviews.length}</span>
+                Reviews · <span className="reviews__amount">{reviews.length}</span>
             </h2>
-            <Reviews />
+            <Reviews/>
           </section>
 
         </div>
@@ -75,6 +96,7 @@ function OfferScreen(): JSX.Element {
         <NearPlaces
           offers={rentalOffersNearby}
           setActiveCard={setActiveCard}
+          onSetFavorite={toggleFavoriteStatus}
         />
       </div>
     </main>

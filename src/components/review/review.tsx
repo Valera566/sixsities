@@ -2,12 +2,14 @@ import ReviewsList from '../reviews-list/reviews-list.tsx';
 import {ReviewForm} from '../review-form/review-form.tsx';
 import {useAppSelector} from '../../hooks';
 import {AuthorizationStatus} from '../../const.ts';
+import React from 'react';
+import { getReviews } from '../../store/app-data/selectors.ts';
+import { getAuthorizationStatus } from '../../store/user-process/selectors.ts';
 
-
-export const Reviews = () => {
-  const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
+const Reviews = () => {
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const isAuth = authorizationStatus === AuthorizationStatus.Auth;
-  const reviews = useAppSelector((state) => state.reviews);
+  const reviews = useAppSelector(getReviews);
 
   return (
     <>
@@ -16,3 +18,5 @@ export const Reviews = () => {
     </>
   );
 };
+
+export default React.memo(Reviews);

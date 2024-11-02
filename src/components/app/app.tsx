@@ -8,7 +8,7 @@ import LoginScreen from '../../pages/login-screen/login-screen.tsx';
 import NotFoundScreen from '../../pages/not-found-screen/not-found-screen.tsx';
 import PrivateRoute from '../private-route/private-route.tsx';
 import Layout from '../layout/layout.tsx';
-import { getAuthorizationStatus } from '../../store/selectors.ts';
+import { getAuthorizationStatus } from '../../store/user-process/selectors.ts';
 import { useAppSelector } from '../../hooks';
 import HistoryRoute from '../history-route/history-route.tsx';
 import browserHistory from '../../browser-history.ts';

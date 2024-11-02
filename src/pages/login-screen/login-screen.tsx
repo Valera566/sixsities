@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { AppRoute, AuthorizationStatus } from '../../const.ts';
 import { useNavigate } from 'react-router-dom';
-import { getAuthorizationStatus } from '../../store/selectors.ts';
+import { getAuthorizationStatus } from '../../store/user-process/selectors.ts';
 import { FormEvent, useEffect, useRef } from 'react';
 import { AuthData } from '../../types/auth-data.ts';
 import { loginAction } from '../../store/api-actions.ts';
@@ -32,11 +32,27 @@ function LoginScreen() {
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
+    const hasEnglishCharacters = (password: string) => /[a-zA-Z]/.test(password);
     const isAnySpaces = (password: string) => /\s/.test(password);
+    const hasNumber = (password: string) => /\d/.test(password);
 
-    if (passwordRef.current !== null && isAnySpaces(passwordRef.current.value)
+    if (
+      passwordRef.current !== null &&
+      isAnySpaces(passwordRef.current.value)
     ) {
       toast.warn('Password should not contain spaces.');
+    } else if (
+      passwordRef.current !== null &&
+      loginRef.current !== null &&
+      !hasEnglishCharacters(passwordRef.current.value)
+    ) {
+      toast.warn('Password should contain English characters.');
+    } else if (
+      passwordRef.current !== null &&
+      loginRef.current !== null &&
+      !hasNumber(passwordRef.current.value)
+    ) {
+      toast.warn('Password should contain at least one number.');
     } else if (loginRef.current !== null && passwordRef.current !== null) {
       toast.success('You are logged in!');
       onSubmit({

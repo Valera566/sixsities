@@ -1,12 +1,14 @@
 import { Offer } from '../../types/offer.ts';
 import PlaceCard from '../place-card/place-card.tsx';
+import React from 'react';
 
 type NearPlacesProps = {
   offers?: Offer[] | undefined;
   setActiveCard(id: number | null): void;
+  onSetFavorite: (isFavorite: boolean, offerId: number) => void;
 };
 
-function NearPlaces({offers, setActiveCard}: NearPlacesProps) {
+function NearPlaces({offers, setActiveCard, onSetFavorite}: NearPlacesProps) {
   return (
     <section className="near-places places">
       <h2 className="near-places__title">
@@ -20,6 +22,7 @@ function NearPlaces({offers, setActiveCard}: NearPlacesProps) {
               offer={offer}
               setActiveCard={setActiveCard}
               cardType="nearPlaces"
+              onSetFavorite = {onSetFavorite}
             />
           ))}
       </div>
@@ -27,4 +30,4 @@ function NearPlaces({offers, setActiveCard}: NearPlacesProps) {
   );
 }
 
-export default NearPlaces;
+export default React.memo(NearPlaces);

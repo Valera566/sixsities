@@ -1,18 +1,21 @@
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { changeCity } from '../../store/action.ts';
+import { getOffers } from '../../store/app-data/selectors.ts';
+import { changeCity } from '../../store/app-process/app-process.ts';
+import { getCurrentCity } from '../../store/app-process/selectors.ts';
 import cn from 'classnames';
+import React from 'react';
 
 function LocationsComponent() {
   const dispatch = useAppDispatch();
-  const activeCity = useAppSelector((state) => state.city);
-  const offers = useAppSelector((state) => state.offers);
+  const activeCity = useAppSelector(getCurrentCity);
+  const offers = useAppSelector(getOffers);
   const cities = [...new Set(offers.map((offer) => offer.city.name))];
 
   const handleSetActiveLink = (city: string) => {
     const selectedCityOffer = offers.find((offer) => offer.city.name === city);
 
     if (selectedCityOffer) {
-      dispatch(changeCity({ city: selectedCityOffer.city }));
+      dispatch(changeCity(selectedCityOffer.city));
     }
   };
 
@@ -37,4 +40,4 @@ function LocationsComponent() {
   );
 }
 
-export default LocationsComponent;
+export default React.memo(LocationsComponent);

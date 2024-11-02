@@ -7,7 +7,7 @@ export type PlaceCardProps = {
   offer: Offer;
   setActiveCard?: (id: number | null) => void;
   cardType?: 'cities' | 'favorites' | 'nearPlaces';
-  onCardClick?: () => void;
+  onSetFavorite: (isFavorite: boolean, offerId: number) => void;
 };
 
 function getArticleClassName(cardType: 'cities' | 'favorites' | 'nearPlaces') {
@@ -36,7 +36,7 @@ function getImageWrapperClassName(cardType: 'cities' | 'favorites' | 'nearPlaces
   }
 }
 
-function PlaceCard({offer, setActiveCard, cardType = 'cities', onCardClick}: PlaceCardProps): JSX.Element {
+function PlaceCard({offer, setActiveCard, cardType = 'cities', onSetFavorite}: PlaceCardProps): JSX.Element {
   const {
     isPremium,
     previewImage,
@@ -77,7 +77,6 @@ function PlaceCard({offer, setActiveCard, cardType = 'cities', onCardClick}: Pla
       className={`${articleClassName} place-card`}
       onMouseOver={handleMouseOver}
       onMouseOut={handleMouseOut}
-      onClick={onCardClick}
     >
       {isPremium && (
         <div className="place-card__mark">
@@ -101,7 +100,7 @@ function PlaceCard({offer, setActiveCard, cardType = 'cities', onCardClick}: Pla
             <b className="place-card__price-value">€{price}</b>
             <span className="place-card__price-text">/&nbsp;night</span>
           </div>
-          <button className={bookmarkButtonClass} type="button">
+          <button className={bookmarkButtonClass} type="button" onClick={() => onSetFavorite(isFavorite, id)}>
             <svg className="place-card__bookmark-icon" width={18} height={19}>
               <use xlinkHref="#icon-bookmark"/>
             </svg>
