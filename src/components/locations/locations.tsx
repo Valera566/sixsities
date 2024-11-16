@@ -1,9 +1,10 @@
-import { useAppDispatch, useAppSelector } from '../../hooks';
-import { getOffers } from '../../store/app-data/selectors.ts';
-import { changeCity } from '../../store/app-process/app-process.ts';
-import { getCurrentCity } from '../../store/app-process/selectors.ts';
+import {useAppDispatch, useAppSelector} from '../../hooks';
+import {getOffers} from '../../store/app-data/selectors.ts';
+import {changeCity, setSortType} from '../../store/app-process/app-process.ts';
+import {getCurrentCity} from '../../store/app-process/selectors.ts';
 import cn from 'classnames';
 import React from 'react';
+import {SortOption} from '../../const.ts';
 
 function LocationsComponent() {
   const dispatch = useAppDispatch();
@@ -16,6 +17,11 @@ function LocationsComponent() {
 
     if (selectedCityOffer) {
       dispatch(changeCity(selectedCityOffer.city));
+      dispatch(setSortType({
+        sortType: SortOption.popular,
+        selectState: false,
+      })
+      );
     }
   };
 

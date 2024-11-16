@@ -12,7 +12,8 @@ const initialState: AppProcess = {
       zoom: 13,
     },
   },
-  sortType: SortOption.popular
+  sortType: SortOption.popular,
+  selectState: false,
 };
 
 export const appProcess = createSlice({
@@ -22,8 +23,9 @@ export const appProcess = createSlice({
     changeCity: (state, action: PayloadAction<City>) => {
       state.city = action.payload;
     },
-    setSortType: (state, action: PayloadAction<SortOption>) => {
-      state.sortType = action.payload;
+    setSortType: (state, action: PayloadAction<{ sortType: SortOption; selectState: boolean }>) => {
+      state.sortType = action.payload.sortType;
+      state.selectState = action.payload.selectState;
     }
   }
 });

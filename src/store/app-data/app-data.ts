@@ -1,7 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppData } from '../../types/state.ts';
-import { NameSpace } from '../../const.ts';
-import { updateFavoriteStatus } from '../../utils/utils.ts';
+import {DEFAULT_FORM_STATE, NameSpace} from '../../const.ts';
+import { updateOffers} from '../../utils/utils.ts';
 import {
   getOffersActions,
   getOffersNearbyAction,
@@ -11,6 +11,7 @@ import {
   getFavoritesOffersAction,
   postFavoriteAction
 } from '../api-actions.ts';
+import { NewReview } from '../../types/offer.ts';
 
 const initialState: AppData = {
   offers: [],
@@ -19,13 +20,19 @@ const initialState: AppData = {
   offersNearby: [],
   isLoading: false,
   favoriteOffers: [],
-  isFavoritesOffersLoading: false,
+  isPostFavoriteStateStatus: false,
+  formData: DEFAULT_FORM_STATE,
+  formActiveState: false,
 };
 
 export const appData = createSlice({
   name: NameSpace.Data,
   initialState,
-  reducers: {},
+  reducers: {
+    changeFormData: (state, action: PayloadAction<NewReview>) => {
+      state.formData = action.payload;
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(getOffersActions.pending, (state) => {
@@ -48,49 +55,39 @@ export const appData = createSlice({
       .addCase(getOffersNearbyAction.fulfilled, (state, action) => {
         state.offersNearby = action.payload;
       })
+      .addCase(postReviewAction.rejected, (state) => {
+        state.formActiveState = false;
+      })
+      .addCase(postReviewAction.pending, (state) => {
+        state.formActiveState = true;
+      })
       .addCase(postReviewAction.fulfilled, (state, action) => {
-        state.reviews = action.payload;
+        const newReviews = Array.isArray(action.payload) ? action.payload : [action.payload];
+        state.reviews = [...state.reviews, ...newReviews];
+        state.formActiveState = false;
+        state.formData = DEFAULT_FORM_STATE;
       })
       .addCase(getReviewsByIdAction.fulfilled, (state, action) => {
         state.reviews = action.payload;
       })
-      .addCase(getFavoritesOffersAction.pending, (state) => {
-        state.isFavoritesOffersLoading = true;
-      })
-      .addCase(getFavoritesOffersAction.rejected, (state) => {
-        state.isFavoritesOffersLoading = false;
-      })
       .addCase(getFavoritesOffersAction.fulfilled, (state, action) => {
         state.favoriteOffers = action.payload;
-        state.isFavoritesOffersLoading = false;
+      })
+      .addCase(postFavoriteAction.pending, (state) => {
+        state.isPostFavoriteStateStatus = true;
+      })
+      .addCase(postFavoriteAction.rejected, (state) => {
+        state.isPostFavoriteStateStatus = true;
       })
       .addCase(postFavoriteAction.fulfilled, (state, action) => {
-        const { id, isFavorite } = action.payload;
-
-        state.favoriteOffers = updateFavoriteStatus(state.favoriteOffers, id, isFavorite);
-
-        if (!isFavorite) {
-          state.favoriteOffers = state.favoriteOffers.filter(
-            (offer) => offer.id !== id
-          );
-
-          state.offers = updateFavoriteStatus(state.offers, id, isFavorite);
-          state.offersNearby = updateFavoriteStatus(state.offersNearby, id, isFavorite);
-        } else {
-          const existingIndex = state.favoriteOffers.findIndex((offer) => offer.id === id);
-
-          if (existingIndex === -1) {
-            state.favoriteOffers = [...state.favoriteOffers, { ...action.payload }];
-          }
-
-          state.offers = updateFavoriteStatus(state.offers, id, isFavorite);
-          state.offersNearby = updateFavoriteStatus(state.offersNearby, id, isFavorite);
-        }
-
-        if (state.offerById?.id === action.payload.id) {
+        state.offers = updateOffers(state.offers, action.payload);
+        state.offersNearby = updateOffers(state.offersNearby, action.payload);
+        state.isPostFavoriteStateStatus = false;
+        if (state.offerById) {
           state.offerById.isFavorite = action.payload.isFavorite;
         }
-
       });
   }
 });
+
+export const { changeFormData } = appData.actions;

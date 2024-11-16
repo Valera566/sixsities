@@ -54,3 +54,5 @@ export type Review = {
     isPro: boolean;
   };
 }
+
+export type NewReview = Pick<Review, 'comment' | 'rating'>;

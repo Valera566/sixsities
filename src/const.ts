@@ -63,3 +63,8 @@ export enum FavoriteStatus {
   Favorite = 1,
   NotFavorite = 0,
 }
+
+export const DEFAULT_FORM_STATE = {
+  comment: '',
+  rating: 0,
+};

@@ -2,13 +2,20 @@ import { Offer } from '../../types/offer.ts';
 import { ratingOffers } from '../../utils/utils.ts';
 import cn from 'classnames';
 import React from 'react';
+import {useAppDispatch, useAppSelector} from '../../hooks';
+import {getIsUserAuthenticated} from '../../store/user-process/selectors.ts';
+import {useNavigate} from 'react-router-dom';
+import { AppRoute, FavoriteStatus} from '../../const.ts';
+import {postFavoriteAction} from '../../store/api-actions.ts';
 
 type OfferDescriptionList = {
   offer: Offer;
-  onSetFavorite: (isFavorite: boolean, offerId: number) => void;
 }
 
-function OfferDescriptionList({ offer, onSetFavorite }: OfferDescriptionList) {
+function OfferDescriptionList({ offer}: OfferDescriptionList) {
+  const isUserLoggedIn = useAppSelector(getIsUserAuthenticated);
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const {
     id,
@@ -24,6 +31,18 @@ function OfferDescriptionList({ offer, onSetFavorite }: OfferDescriptionList) {
     host,
     description,
   } = offer;
+
+  const handleFavoriteButtonClick = () => {
+    if (!isUserLoggedIn) {
+      navigate(AppRoute.Login);
+    }
+    dispatch(
+      postFavoriteAction([
+        isFavorite ? FavoriteStatus.NotFavorite : FavoriteStatus.Favorite,
+        id,
+      ])
+    );
+  };
 
   const bookmarkButtonClass = cn('offer__bookmark-button', 'button', {
     'place-card__bookmark-button--active': isFavorite,
@@ -44,6 +63,7 @@ function OfferDescriptionList({ offer, onSetFavorite }: OfferDescriptionList) {
     ? `${maxAdults} ${maxAdults > 1 ? 'adults' : 'adult'}`
     : '2 adults'}`;
 
+
   return (
     <div key={id} className="offer__wrapper">
       {isPremium && (
@@ -55,7 +75,7 @@ function OfferDescriptionList({ offer, onSetFavorite }: OfferDescriptionList) {
         <h1 className="offer__name">
           {title}
         </h1>
-        <button className={bookmarkButtonClass} type="button" onClick={() =>onSetFavorite(isFavorite, id)}>
+        <button className={bookmarkButtonClass} type="button" onClick={handleFavoriteButtonClick}>
           <svg className={bookmarkIconClass}
             width={31} height={33}
           >

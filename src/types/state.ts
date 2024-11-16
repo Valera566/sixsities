@@ -1,5 +1,5 @@
 import { store } from '../store';
-import {City, Offer, Review} from './offer.ts';
+import {City, NewReview, Offer, Review} from './offer.ts';
 import {AuthorizationStatus, SortOption} from '../const.ts';
 import {UserDataProfile} from './user-data.ts';
 
@@ -14,7 +14,9 @@ export type AppData = {
   reviews: Review[];
   isLoading: boolean;
   favoriteOffers:Offer[];
-  isFavoritesOffersLoading: boolean;
+  isPostFavoriteStateStatus: boolean;
+  formData: NewReview;
+  formActiveState: boolean;
 }
 
 export type UserProcess = {
@@ -25,4 +27,5 @@ export type UserProcess = {
 export type AppProcess = {
   city: City;
   sortType: SortOption;
+  selectState: boolean;
 }

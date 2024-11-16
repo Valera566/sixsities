@@ -7,7 +7,7 @@ type ReviewsItemProps = {
 
 function ReviewsItem({ review }: ReviewsItemProps) {
   return (
-    <li key={review.id} className="reviews__item">
+    <li className="reviews__item">
       <div className="reviews__user user">
         <div className="reviews__avatar-wrapper user__avatar-wrapper">
           <img

@@ -1,45 +1,45 @@
-import { Helmet } from 'react-helmet-async';
+import {Helmet} from 'react-helmet-async';
 import Reviews from '../../components/review/review.tsx';
 import OfferDescriptionList from '../../components/offer-description-list/offer-description-list.tsx';
-import {useNavigate, useParams} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import {useEffect, useState} from 'react';
 import Map from '../../components/map/map.tsx';
 import NearPlaces from '../../components/near-places/near-places.tsx';
-import { useAppSelector, useAppDispatch } from '../../hooks';
+import {useAppDispatch, useAppSelector} from '../../hooks';
 import OfferGallery from '../../components/offer-gallery/offer-gallery.tsx';
 import NotFoundScreen from '../not-found-screen/not-found-screen.tsx';
 import {
+  getFavoritesOffersAction,
   getOfferByIdAction,
   getOffersNearbyAction,
-  getReviewsByIdAction, postFavoriteAction
+  getReviewsByIdAction,
 } from '../../store/api-actions.ts';
 import Spinner from '../../components/spinner/spinner.tsx';
-import { getCurrentCity } from '../../store/app-process/selectors.ts';
-import {getCurrentOffer, getOffersNearby, getLoadingStatus, getReviews} from '../../store/app-data/selectors.ts';
-import {toast} from 'react-toastify';
-import {APIRoute, FavoriteStatus} from '../../const.ts';
-import {getAuthorizationStatus, getIsUserAuthenticated} from '../../store/user-process/selectors.ts';
+import {getCurrentCity} from '../../store/app-process/selectors.ts';
+import {getCurrentOffer, getLoadingStatus, getOffersNearby} from '../../store/app-data/selectors.ts';
+import {getAuthorizationStatus} from '../../store/user-process/selectors.ts';
+import {AuthorizationStatus} from '../../const.ts';
 
 function OfferScreen(): JSX.Element {
   const dispatch = useAppDispatch();
   const activeCity = useAppSelector(getCurrentCity);
   const { id } = useParams<{ id: string }>();
-  const reviews = useAppSelector(getReviews);
   const [currentActiveCard, setActiveCard] = useState<number | null>(null);
   const rentalOffer = useAppSelector(getCurrentOffer);
   const isOffersLoading = useAppSelector(getLoadingStatus);
   const rentalOffersNearby = useAppSelector(getOffersNearby);
-  const isUserLoggedIn = useAppSelector(getIsUserAuthenticated);
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
-  const navigate = useNavigate();
 
   useEffect(() => {
+    if (authorizationStatus === AuthorizationStatus.Auth) {
+      dispatch(getFavoritesOffersAction());
+    }
     if (id) {
       dispatch(getOfferByIdAction(id));
       dispatch(getOffersNearbyAction(id));
       dispatch(getReviewsByIdAction(id));
     }
-  }, [id, authorizationStatus]);
+  }, [id]);
 
   if (!rentalOffer) {
     return <NotFoundScreen />;
@@ -53,19 +53,6 @@ function OfferScreen(): JSX.Element {
     );
   }
 
-  const toggleFavoriteStatus = (isFavorite: boolean, offerId: number) => {
-    if (!isUserLoggedIn) {
-      toast.warn('You must log in or register to add to favorites.');
-      navigate(APIRoute.Login);
-    } else {
-      const newFavoriteStatus = isFavorite
-        ? FavoriteStatus.NotFavorite
-        : FavoriteStatus.Favorite;
-
-      dispatch(postFavoriteAction([newFavoriteStatus, offerId]));
-    }
-  };
-
   return (
     <main className="page__main page__main--offer">
       <Helmet>
@@ -74,14 +61,8 @@ function OfferScreen(): JSX.Element {
       <section className="offer">
         <OfferGallery offer={rentalOffer}/>
         <div className="offer__container container">
-          {rentalOffer ? <OfferDescriptionList offer={rentalOffer} onSetFavorite={toggleFavoriteStatus}/> : null}
-          <section className="offer__reviews reviews">
-            <h2 className="reviews__title">
-                Reviews · <span className="reviews__amount">{reviews.length}</span>
-            </h2>
-            <Reviews/>
-          </section>
-
+          {rentalOffer && <OfferDescriptionList offer={rentalOffer} /> }
+          <Reviews/>
         </div>
         <section className="offer__map map">
           <Map
@@ -92,13 +73,10 @@ function OfferScreen(): JSX.Element {
           />
         </ section>
       </section>
-      <div className="container">
-        <NearPlaces
-          offers={rentalOffersNearby}
-          setActiveCard={setActiveCard}
-          onSetFavorite={toggleFavoriteStatus}
-        />
-      </div>
+      <NearPlaces
+        offers={rentalOffersNearby}
+        setActiveCard={setActiveCard}
+      />
     </main>
   );
 }

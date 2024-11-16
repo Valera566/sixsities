@@ -1,57 +1,51 @@
-import {useCallback, useState} from 'react';
-import {useParams} from 'react-router-dom';
-import {getReviewsByIdAction, postReviewAction} from '../../store/api-actions.ts';
-import {useAppDispatch} from '../../hooks';
+import { FormEvent } from 'react';
+import { useParams } from 'react-router-dom';
+import { postReviewAction} from '../../store/api-actions.ts';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { getFormData, getFormActiveState } from '../../store/app-data/selectors.ts';
 import ReviewRating from '../review-rating/review-rating.tsx';
+import { changeFormData } from '../../store/app-data/app-data.ts';
+
 
 export const ReviewForm = () => {
-  const { id } = useParams<{ id: string }>();
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState('');
+  const { id } = useParams();
   const minCommentLength = 50;
   const dispatch = useAppDispatch();
+  const maxCommentLength = 300;
+  const formActiveState = useAppSelector(getFormActiveState);
+  const formData = useAppSelector(getFormData);
+  const { comment, rating } = formData;
 
-  const handleRatingChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = Number(e.target.value);
-      setRating(value);
-    },
-    []
-  );
 
-  const handleCommentChange = useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      const value = e.target.value;
-      setComment(value);
-    },
-    []
-  );
+  const handleFieldChange = ({
+    target,
+  }: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = target;
+    dispatch(changeFormData({ ...formData, [name]: name === 'rating' ? Number(value) : value }));
+  };
 
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> | undefined = (
-    event
-  ) => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (id) {
       dispatch(postReviewAction([{ comment, rating }, id]));
-      dispatch(getReviewsByIdAction(id));
-      setComment('');
-      setRating(0);
     }
   };
+
 
   return (
     <form className="reviews__form form" action="#" method="post" onSubmit={handleSubmit}>
       <label className="reviews__label form__label" htmlFor="review">
       Your review
       </label>
-      <ReviewRating rating={rating} handleRatingChange={handleRatingChange} />
+      <ReviewRating rating={rating} handleRatingChange={handleFieldChange} />
       <textarea
         className="reviews__textarea form__textarea"
-        id="review"
-        name="review"
+        id="comment"
+        name="comment"
         placeholder="Tell how was your stay, what you like and what can be improved"
         value={comment}
-        onChange={handleCommentChange}
+        onChange={handleFieldChange}
+        disabled={formActiveState}
       />
       <div className="reviews__button-wrapper">
         <p className="reviews__help">
@@ -63,7 +57,12 @@ export const ReviewForm = () => {
         <button
           className="reviews__submit form__submit button"
           type="submit"
-          disabled={comment.length < minCommentLength || rating === 0}
+          disabled={
+            formActiveState ||
+            comment.length < minCommentLength ||
+            comment.length > maxCommentLength ||
+            rating === 0
+          }
         >
         Submit
         </button>

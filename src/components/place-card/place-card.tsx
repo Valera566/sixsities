@@ -1,13 +1,16 @@
 import { Offer } from '../../types/offer.ts';
-import { Link } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import { ratingOffers } from '../../utils/utils.ts';
 import cn from 'classnames';
+import {AppRoute, FavoriteStatus} from '../../const.ts';
+import {postFavoriteAction} from '../../store/api-actions.ts';
+import {useAppDispatch, useAppSelector} from '../../hooks';
+import {getIsUserAuthenticated} from '../../store/user-process/selectors.ts';
 
 export type PlaceCardProps = {
   offer: Offer;
   setActiveCard?: (id: number | null) => void;
   cardType?: 'cities' | 'favorites' | 'nearPlaces';
-  onSetFavorite: (isFavorite: boolean, offerId: number) => void;
 };
 
 function getArticleClassName(cardType: 'cities' | 'favorites' | 'nearPlaces') {
@@ -36,7 +39,7 @@ function getImageWrapperClassName(cardType: 'cities' | 'favorites' | 'nearPlaces
   }
 }
 
-function PlaceCard({offer, setActiveCard, cardType = 'cities', onSetFavorite}: PlaceCardProps): JSX.Element {
+function PlaceCard({offer, setActiveCard, cardType = 'cities'}: PlaceCardProps): JSX.Element {
   const {
     isPremium,
     previewImage,
@@ -50,6 +53,21 @@ function PlaceCard({offer, setActiveCard, cardType = 'cities', onSetFavorite}: P
 
   const articleClassName = getArticleClassName(cardType);
   const imageWrapperClassName = getImageWrapperClassName(cardType);
+  const isUserLoggedIn = useAppSelector(getIsUserAuthenticated);
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const handleFavoriteButtonClick = () => {
+    if (!isUserLoggedIn) {
+      navigate(AppRoute.Login);
+    }
+    dispatch(
+      postFavoriteAction([
+        isFavorite ? FavoriteStatus.NotFavorite : FavoriteStatus.Favorite,
+        id,
+      ])
+    );
+  };
 
   function handleMouseOver() {
     if(setActiveCard) {
@@ -100,7 +118,7 @@ function PlaceCard({offer, setActiveCard, cardType = 'cities', onSetFavorite}: P
             <b className="place-card__price-value">€{price}</b>
             <span className="place-card__price-text">/&nbsp;night</span>
           </div>
-          <button className={bookmarkButtonClass} type="button" onClick={() => onSetFavorite(isFavorite, id)}>
+          <button className={bookmarkButtonClass} type="button" onClick={handleFavoriteButtonClick}>
             <svg className="place-card__bookmark-icon" width={18} height={19}>
               <use xlinkHref="#icon-bookmark"/>
             </svg>

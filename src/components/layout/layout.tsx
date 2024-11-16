@@ -2,9 +2,10 @@ import {AppRoute, AuthorizationStatus} from '../../const';
 import {Link, Outlet, useLocation} from 'react-router-dom';
 import { getAuthorizationStatus } from '../../store/user-process/selectors.ts';
 import {useAppDispatch, useAppSelector} from '../../hooks';
-import {logoutAction} from '../../store/api-actions.ts';
+import {getFavoritesOffersAction, logoutAction} from '../../store/api-actions.ts';
 import { getUserData } from '../../store/user-process/selectors.ts';
-import {getFavorites} from '../../store/app-data/selectors.ts';
+import {getFavoriteOffersCount, getPostFavoriteStateStatus} from '../../store/app-data/selectors.ts';
+import {useEffect} from 'react';
 
 const getLayoutState = (pathname: AppRoute) => {
   let rootClassName = '';
@@ -32,8 +33,16 @@ export default function Layout() {
   const {rootClassName, linkClassName, shouldRenderUser, shouldRenderFooter} = getLayoutState(pathname as AppRoute);
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const dispatch = useAppDispatch();
-  const favoriteCount = useAppSelector(getFavorites);
   const { email , avatarUrl } = useAppSelector(getUserData);
+  const favoriteOffersCount = useAppSelector(getFavoriteOffersCount);
+  const postFavoriteStateStatus = useAppSelector(getPostFavoriteStateStatus);
+
+  useEffect(() => {
+    if (!postFavoriteStateStatus && authorizationStatus === AuthorizationStatus.Auth) {
+      dispatch(getFavoritesOffersAction());
+    }
+  }, [postFavoriteStateStatus, authorizationStatus]);
+
 
   return (
     <div className={`page${rootClassName}`}>
@@ -68,7 +77,7 @@ export default function Layout() {
                           <>
                             <span className="header__user-name user__name">{email}</span>
 
-                            <span className="header__favorite-count">{favoriteCount.length}</span>
+                            <span className="header__favorite-count">{favoriteOffersCount}</span>
                           </>
                         ) : <span className="header__login">Sign in</span>}
                       </Link>
