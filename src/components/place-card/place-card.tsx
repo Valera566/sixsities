@@ -2,12 +2,12 @@ import { Offer } from '../../types/offer.ts';
 import { Link } from 'react-router-dom';
 import { ratingOffers } from '../../utils/utils.ts';
 import cn from 'classnames';
+import BookmarkButton from '../bookmark-button/bookmark-button.tsx';
 
 export type PlaceCardProps = {
   offer: Offer;
   setActiveCard?: (id: number | null) => void;
   cardType?: 'cities' | 'favorites' | 'nearPlaces';
-  onCardClick?: () => void;
 };
 
 function getArticleClassName(cardType: 'cities' | 'favorites' | 'nearPlaces') {
@@ -36,7 +36,7 @@ function getImageWrapperClassName(cardType: 'cities' | 'favorites' | 'nearPlaces
   }
 }
 
-function PlaceCard({offer, setActiveCard, cardType = 'cities', onCardClick}: PlaceCardProps): JSX.Element {
+function PlaceCard({offer, setActiveCard, cardType = 'cities'}: PlaceCardProps): JSX.Element {
   const {
     isPremium,
     previewImage,
@@ -68,16 +68,11 @@ function PlaceCard({offer, setActiveCard, cardType = 'cities', onCardClick}: Pla
     'place-card__info': true,
   });
 
-  const bookmarkButtonClass = cn('place-card__bookmark-button', 'button', {
-    'place-card__bookmark-button--active': isFavorite,
-  });
-
   return (
     <article
       className={`${articleClassName} place-card`}
       onMouseOver={handleMouseOver}
       onMouseOut={handleMouseOut}
-      onClick={onCardClick}
     >
       {isPremium && (
         <div className="place-card__mark">
@@ -101,12 +96,7 @@ function PlaceCard({offer, setActiveCard, cardType = 'cities', onCardClick}: Pla
             <b className="place-card__price-value">€{price}</b>
             <span className="place-card__price-text">/&nbsp;night</span>
           </div>
-          <button className={bookmarkButtonClass} type="button">
-            <svg className="place-card__bookmark-icon" width={18} height={19}>
-              <use xlinkHref="#icon-bookmark"/>
-            </svg>
-            <span className="visually-hidden">To bookmarks</span>
-          </button>
+          <BookmarkButton id={id} isFavorite={isFavorite} block={'place-card'} size={'small'}/>
         </div>
         <div className="place-card__rating rating">
           <div className="place-card__stars rating__stars">

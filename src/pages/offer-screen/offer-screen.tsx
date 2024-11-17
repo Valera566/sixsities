@@ -1,33 +1,30 @@
-import { Helmet } from 'react-helmet-async';
-import { Reviews } from '../../components/review/review.tsx';
+import {Helmet} from 'react-helmet-async';
+import Reviews from '../../components/review/review.tsx';
 import OfferDescriptionList from '../../components/offer-description-list/offer-description-list.tsx';
-import { useParams } from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import {useEffect, useState} from 'react';
 import Map from '../../components/map/map.tsx';
 import NearPlaces from '../../components/near-places/near-places.tsx';
-import { useAppSelector, useAppDispatch } from '../../hooks';
+import {useAppDispatch, useAppSelector} from '../../hooks';
 import OfferGallery from '../../components/offer-gallery/offer-gallery.tsx';
 import NotFoundScreen from '../not-found-screen/not-found-screen.tsx';
 import {
   getOfferByIdAction,
   getOffersNearbyAction,
-  getReviewsByIdAction
+  getReviewsByIdAction,
 } from '../../store/api-actions.ts';
 import Spinner from '../../components/spinner/spinner.tsx';
+import {getCurrentCity} from '../../store/app-process/selectors.ts';
+import {getCurrentOffer, getLoadingStatus, getOffersNearby} from '../../store/app-data/selectors.ts';
 
 function OfferScreen(): JSX.Element {
   const dispatch = useAppDispatch();
-  const activeCity = useAppSelector((state) => state.city);
-
-
+  const activeCity = useAppSelector(getCurrentCity);
   const { id } = useParams<{ id: string }>();
-  const reviews = useAppSelector((state) => state.reviews);
-
   const [currentActiveCard, setActiveCard] = useState<number | null>(null);
-
-  const rentalOffer = useAppSelector((state) => state.offerById);
-  const isOffersLoading = useAppSelector((state) => state.isLoading);
-  const rentalOffersNearby = useAppSelector((state) => state.offersNearby);
+  const rentalOffer = useAppSelector(getCurrentOffer);
+  const isOffersLoading = useAppSelector(getLoadingStatus);
+  const rentalOffersNearby = useAppSelector(getOffersNearby);
 
   useEffect(() => {
     if (id) {
@@ -35,14 +32,18 @@ function OfferScreen(): JSX.Element {
       dispatch(getOffersNearbyAction(id));
       dispatch(getReviewsByIdAction(id));
     }
-  }, [id, dispatch]);
+  }, [id]);
 
   if (!rentalOffer) {
     return <NotFoundScreen />;
   }
 
   if (isOffersLoading) {
-    return <Spinner />;
+    return (
+      <div className="offer__container container">
+        <Spinner/>;
+      </div>
+    );
   }
 
   return (
@@ -53,14 +54,8 @@ function OfferScreen(): JSX.Element {
       <section className="offer">
         <OfferGallery offer={rentalOffer}/>
         <div className="offer__container container">
-          {rentalOffer ? <OfferDescriptionList offer={rentalOffer} /> : null}
-          <section className="offer__reviews reviews">
-            <h2 className="reviews__title">
-                  Reviews · <span className="reviews__amount">{reviews.length}</span>
-            </h2>
-            <Reviews />
-          </section>
-
+          {rentalOffer && <OfferDescriptionList offer={rentalOffer} /> }
+          <Reviews/>
         </div>
         <section className="offer__map map">
           <Map
@@ -71,12 +66,10 @@ function OfferScreen(): JSX.Element {
           />
         </ section>
       </section>
-      <div className="container">
-        <NearPlaces
-          offers={rentalOffersNearby}
-          setActiveCard={setActiveCard}
-        />
-      </div>
+      <NearPlaces
+        offers={rentalOffersNearby}
+        setActiveCard={setActiveCard}
+      />
     </main>
   );
 }

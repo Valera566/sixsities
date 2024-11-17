@@ -1,18 +1,21 @@
 import { useAppSelector } from '../../hooks';
 import PlaceCard from '../place-card/place-card.tsx';
 import { sortOffers } from '../../utils/sortOffers.ts';
+import { memo } from 'react';
+import { getOffers } from '../../store/app-data/selectors.ts';
+import { getCurrentCity, getSortType } from '../../store/app-process/selectors.ts';
 
 type PlaceCardListProps = {
   setActiveCard: (id: number | null) => void;
 };
 
 const PlaceCardList = ({setActiveCard}: PlaceCardListProps) => {
-  const offers = useAppSelector((state) => state.offers);
-  const activeCity = useAppSelector((state) => state.city.name);
-  const offersByActiveCity = offers.filter((offer) => offer.city.name === activeCity);
-  const sortType = useAppSelector((state) => state.sortType);
-
+  const offers = useAppSelector(getOffers);
+  const activeCity = useAppSelector(getCurrentCity);
+  const offersByActiveCity = offers.filter((offer) => offer.city.name === activeCity.name);
+  const sortType = useAppSelector(getSortType);
   const sortedOffersBySortType = sortOffers(offersByActiveCity, sortType);
+
 
   return (
     <div className="cities__places-list places__list tabs__content">
@@ -23,4 +26,4 @@ const PlaceCardList = ({setActiveCard}: PlaceCardListProps) => {
   );
 };
 
-export default PlaceCardList;
+export default memo(PlaceCardList);

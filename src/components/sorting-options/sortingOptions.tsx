@@ -1,31 +1,38 @@
-import { useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../hooks';
-import { setSortType } from '../../store/action.ts';
-import { SortOption } from '../../const.ts';
+import {useAppDispatch, useAppSelector} from '../../hooks';
+import {SortOption} from '../../const.ts';
 import cn from 'classnames';
+import React from 'react';
+import {getSelectState, getSortType} from '../../store/app-process/selectors.ts';
+import {setSortType} from '../../store/app-process/app-process.ts';
 
 function SortingOptions() {
   const dispatch = useAppDispatch();
-  const sortType = useAppSelector((state) => state.sortType);
+  const sortType = useAppSelector(getSortType);
+  const selectState = useAppSelector(getSelectState);
 
-  const [placesOptionActive, setPlacesOptionActive] = useState(false);
-
-  const handleSortOptionClick = (selectedSortType: SortOption) => {
-    dispatch(setSortType({ sortType: selectedSortType }));
-    setPlacesOptionActive(false);
+  const handleSortOptionClick = (value: SortOption) => {
+    dispatch(setSortType({
+      sortType: value,
+      selectState: false
+    }));
   };
 
   const handleSetPlacesOptionToggle = () => {
-    setPlacesOptionActive(!placesOptionActive);
+    dispatch(setSortType({
+      sortType: sortType || SortOption.popular,
+      selectState: true
+    })
+    );
+
   };
 
   const placesOptionsClass = cn('places__options','places__options--custom', {
-    'places__options--opened': placesOptionActive,
+    'places__options--opened': selectState,
   });
 
   return (
     <form className="places__sorting" action="#" method="get">
-      <span className="places__sorting-caption">Sort by</span>
+      <span className="places__sorting-caption">Sort by </span>
       <span
         className="places__sorting-type"
         tabIndex={0}
@@ -55,4 +62,4 @@ function SortingOptions() {
   );
 }
 
-export default SortingOptions;
+export default React.memo(SortingOptions);
