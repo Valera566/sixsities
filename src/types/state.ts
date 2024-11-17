@@ -22,6 +22,7 @@ export type AppData = {
 export type UserProcess = {
   authorizationStatus: AuthorizationStatus;
   userData: UserDataProfile;
+  isLoadingStatus: boolean;
 }
 
 export type AppProcess = {

@@ -1,12 +1,14 @@
 import { Helmet } from 'react-helmet-async';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { AppRoute, AuthorizationStatus } from '../../const.ts';
-import { useNavigate } from 'react-router-dom';
+import {AppRoute, AuthorizationStatus, CITIES} from '../../const.ts';
+import {Link, useNavigate} from 'react-router-dom';
 import { getAuthorizationStatus } from '../../store/user-process/selectors.ts';
 import { FormEvent, useEffect, useRef } from 'react';
 import { AuthData } from '../../types/auth-data.ts';
 import { loginAction } from '../../store/api-actions.ts';
 import { toast } from 'react-toastify';
+import {getRandomArrayElement} from '../../utils/utils.ts';
+import {changeCity} from '../../store/app-process/app-process.ts';
 
 function LoginScreen() {
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
@@ -14,6 +16,13 @@ function LoginScreen() {
   const navigate = useNavigate();
   const loginRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
+  const randomCity = getRandomArrayElement(CITIES);
+
+  function onRandomCityClickHandler (evt: React.MouseEvent<HTMLAnchorElement>) {
+    evt.preventDefault();
+    dispatch(changeCity(randomCity));
+    navigate(AppRoute.Root);
+  }
 
   const handleRedirectToMainPage = () => {
     if (authorizationStatus === AuthorizationStatus.Auth) {
@@ -105,9 +114,13 @@ function LoginScreen() {
         </section>
         <section className="locations locations--login locations--current">
           <div className="locations__item">
-            <a className="locations__item-link" href="/">
-              <span>Amsterdam</span>
-            </a>
+            <Link
+              className="locations__item-link"
+              to="/"
+              onClick={onRandomCityClickHandler}
+            >
+              <span>{randomCity.name}</span>
+            </Link>
           </div>
         </section>
       </div>

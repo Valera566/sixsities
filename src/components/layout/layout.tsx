@@ -1,11 +1,12 @@
 import {AppRoute, AuthorizationStatus} from '../../const';
 import {Link, Outlet, useLocation} from 'react-router-dom';
-import { getAuthorizationStatus } from '../../store/user-process/selectors.ts';
+import {getAuthorizationStatus, getIsLoginLoadingStatus} from '../../store/user-process/selectors.ts';
 import {useAppDispatch, useAppSelector} from '../../hooks';
 import {getFavoritesOffersAction, logoutAction} from '../../store/api-actions.ts';
 import { getUserData } from '../../store/user-process/selectors.ts';
-import {getFavoriteOffersCount, getPostFavoriteStateStatus} from '../../store/app-data/selectors.ts';
+import { getFavorites } from '../../store/app-data/selectors.ts';
 import {useEffect} from 'react';
+import Spinner from '../spinner/spinner.tsx';
 
 const getLayoutState = (pathname: AppRoute) => {
   let rootClassName = '';
@@ -34,15 +35,22 @@ export default function Layout() {
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const dispatch = useAppDispatch();
   const { email , avatarUrl } = useAppSelector(getUserData);
-  const favoriteOffersCount = useAppSelector(getFavoriteOffersCount);
-  const postFavoriteStateStatus = useAppSelector(getPostFavoriteStateStatus);
+  const favoriteOffersCount = useAppSelector(getFavorites);
+  const loadingStatus = useAppSelector(getIsLoginLoadingStatus);
 
   useEffect(() => {
-    if (!postFavoriteStateStatus && authorizationStatus === AuthorizationStatus.Auth) {
+    if (authorizationStatus === AuthorizationStatus.Auth) {
       dispatch(getFavoritesOffersAction());
     }
-  }, [postFavoriteStateStatus, authorizationStatus]);
+  }, [ authorizationStatus ]);
 
+  if (loadingStatus) {
+    return (
+      <div className={'page page--gray page--main'}>
+        <Spinner/>
+      </div>
+    );
+  }
 
   return (
     <div className={`page${rootClassName}`}>
@@ -77,7 +85,7 @@ export default function Layout() {
                           <>
                             <span className="header__user-name user__name">{email}</span>
 
-                            <span className="header__favorite-count">{favoriteOffersCount}</span>
+                            <span className="header__favorite-count">{favoriteOffersCount.length}</span>
                           </>
                         ) : <span className="header__login">Sign in</span>}
                       </Link>
@@ -87,7 +95,7 @@ export default function Layout() {
                       <li className="header__nav-item">
                         <Link
                           className="header__nav-link"
-                          to={AppRoute.Login}
+                          to={AppRoute.Root}
                           onClick={() => {
                             dispatch(logoutAction());
                           }}

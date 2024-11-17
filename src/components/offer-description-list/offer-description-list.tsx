@@ -1,21 +1,13 @@
 import { Offer } from '../../types/offer.ts';
 import { ratingOffers } from '../../utils/utils.ts';
-import cn from 'classnames';
 import React from 'react';
-import {useAppDispatch, useAppSelector} from '../../hooks';
-import {getIsUserAuthenticated} from '../../store/user-process/selectors.ts';
-import {useNavigate} from 'react-router-dom';
-import { AppRoute, FavoriteStatus} from '../../const.ts';
-import {postFavoriteAction} from '../../store/api-actions.ts';
+import BookmarkButton from '../bookmark-button/bookmark-button.tsx';
 
 type OfferDescriptionList = {
   offer: Offer;
 }
 
 function OfferDescriptionList({ offer}: OfferDescriptionList) {
-  const isUserLoggedIn = useAppSelector(getIsUserAuthenticated);
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
 
   const {
     id,
@@ -32,26 +24,6 @@ function OfferDescriptionList({ offer}: OfferDescriptionList) {
     description,
   } = offer;
 
-  const handleFavoriteButtonClick = () => {
-    if (!isUserLoggedIn) {
-      navigate(AppRoute.Login);
-    }
-    dispatch(
-      postFavoriteAction([
-        isFavorite ? FavoriteStatus.NotFavorite : FavoriteStatus.Favorite,
-        id,
-      ])
-    );
-  };
-
-  const bookmarkButtonClass = cn('offer__bookmark-button', 'button', {
-    'place-card__bookmark-button--active': isFavorite,
-  });
-
-  const bookmarkIconClass = cn({
-    'place-card__bookmark-icon': isFavorite,
-    'offer__bookmark-icon': !isFavorite,
-  });
 
   const ratingStyle = {width: `${ratingOffers(rating)}%`};
 
@@ -75,14 +47,7 @@ function OfferDescriptionList({ offer}: OfferDescriptionList) {
         <h1 className="offer__name">
           {title}
         </h1>
-        <button className={bookmarkButtonClass} type="button" onClick={handleFavoriteButtonClick}>
-          <svg className={bookmarkIconClass}
-            width={31} height={33}
-          >
-            <use xlinkHref="#icon-bookmark"/>
-          </svg>
-          <span className="visually-hidden">To bookmarks</span>
-        </button>
+        <BookmarkButton id={id} isFavorite={isFavorite} block={'offer'} size={'large'}/>
       </div>
       <div className="offer__rating rating">
         <div className="offer__stars rating__stars">

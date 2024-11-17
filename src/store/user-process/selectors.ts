@@ -6,3 +6,4 @@ export const getAuthorizationStatus = (state: State): AuthorizationStatus =>
 export const getIsUserAuthenticated = (state: State): boolean =>
   state[NameSpace.User].authorizationStatus === AuthorizationStatus.Auth;
 export const getUserData = (state: State) => state[NameSpace.User].userData;
+export const getIsLoginLoadingStatus = (state: State): boolean => state[NameSpace.User].isLoadingStatus;

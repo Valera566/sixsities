@@ -11,7 +11,3 @@ export const getIsFavoritesLoading = (state: State): boolean => state[NameSpace.
 export const getFavorites = (state: State): Offer[] => state[NameSpace.Data].favoriteOffers;
 export const getFormActiveState = (state: State): boolean => state[NameSpace.Data].formActiveState;
 export const getFormData = (state: State): NewReview => state[NameSpace.Data].formData;
-export const getFavoriteOffersCount = (state: State): number =>
-  state[NameSpace.Data].favoriteOffers.length;
-export const getPostFavoriteStateStatus = (state: State): boolean =>
-  state[NameSpace.Data].isPostFavoriteStateStatus;

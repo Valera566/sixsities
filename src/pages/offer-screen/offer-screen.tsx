@@ -9,7 +9,6 @@ import {useAppDispatch, useAppSelector} from '../../hooks';
 import OfferGallery from '../../components/offer-gallery/offer-gallery.tsx';
 import NotFoundScreen from '../not-found-screen/not-found-screen.tsx';
 import {
-  getFavoritesOffersAction,
   getOfferByIdAction,
   getOffersNearbyAction,
   getReviewsByIdAction,
@@ -17,8 +16,6 @@ import {
 import Spinner from '../../components/spinner/spinner.tsx';
 import {getCurrentCity} from '../../store/app-process/selectors.ts';
 import {getCurrentOffer, getLoadingStatus, getOffersNearby} from '../../store/app-data/selectors.ts';
-import {getAuthorizationStatus} from '../../store/user-process/selectors.ts';
-import {AuthorizationStatus} from '../../const.ts';
 
 function OfferScreen(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -28,12 +25,8 @@ function OfferScreen(): JSX.Element {
   const rentalOffer = useAppSelector(getCurrentOffer);
   const isOffersLoading = useAppSelector(getLoadingStatus);
   const rentalOffersNearby = useAppSelector(getOffersNearby);
-  const authorizationStatus = useAppSelector(getAuthorizationStatus);
 
   useEffect(() => {
-    if (authorizationStatus === AuthorizationStatus.Auth) {
-      dispatch(getFavoritesOffersAction());
-    }
     if (id) {
       dispatch(getOfferByIdAction(id));
       dispatch(getOffersNearbyAction(id));

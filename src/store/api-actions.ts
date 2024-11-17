@@ -120,14 +120,14 @@ export const logoutAction = createAsyncThunk<
 
 export const postFavoriteAction = createAsyncThunk<
   Offer,
-  [number, number],
+  { id: number; status: number },
   {
     dispatch: AppDispatch;
     state: State;
     extra: AxiosInstance;
   }
->('data/postFavorite', async ([isFavorite, id], { extra: api }) => {
-  const { data } = await api.post<Offer>(`${APIRoute.Favorites}/${id}/${isFavorite}`);
+>('data/postFavorite', async ({ id, status }, { extra: api }) => {
+  const { data } = await api.post<Offer>(`${APIRoute.Favorites}/${id}/${status}`);
   return data;
 });
 

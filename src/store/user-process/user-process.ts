@@ -9,6 +9,7 @@ const initialState: UserProcess = {
     email: '',
     avatarUrl: '',
   },
+  isLoadingStatus: false,
 };
 
 export const userProcess = createSlice({
@@ -24,15 +25,23 @@ export const userProcess = createSlice({
       .addCase(checkAuthAction.rejected, (state) => {
         state.authorizationStatus = AuthorizationStatus.NoAuth;
       })
+      .addCase(loginAction.pending, (state) => {
+        state.isLoadingStatus = true;
+      })
       .addCase(loginAction.fulfilled, (state, action) => {
         state.authorizationStatus = AuthorizationStatus.Auth;
         state.userData = {...action.payload};
+        state.isLoadingStatus = false;
       })
       .addCase(loginAction.rejected, (state) => {
         state.authorizationStatus = AuthorizationStatus.NoAuth;
       })
+      .addCase(logoutAction.pending, (state) => {
+        state.isLoadingStatus = true;
+      })
       .addCase(logoutAction.fulfilled, (state) => {
         state.authorizationStatus = AuthorizationStatus.NoAuth;
+        state.isLoadingStatus = false;
         state.userData.email = '';
         state.userData.avatarUrl = '';
       });

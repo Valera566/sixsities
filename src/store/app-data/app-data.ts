@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppData } from '../../types/state.ts';
 import {DEFAULT_FORM_STATE, NameSpace} from '../../const.ts';
-import { updateOffers} from '../../utils/utils.ts';
 import {
   getOffersActions,
   getOffersNearbyAction,
@@ -80,11 +79,20 @@ export const appData = createSlice({
         state.isPostFavoriteStateStatus = true;
       })
       .addCase(postFavoriteAction.fulfilled, (state, action) => {
-        state.offers = updateOffers(state.offers, action.payload);
-        state.offersNearby = updateOffers(state.offersNearby, action.payload);
-        state.isPostFavoriteStateStatus = false;
-        if (state.offerById) {
-          state.offerById.isFavorite = action.payload.isFavorite;
+        const toBeRemoved = action.meta.arg.status === 0;
+        const {id, isFavorite} = action.payload;
+
+        state.favoriteOffers.forEach((item) => {
+          if (item.id === id) {
+            item.isFavorite = isFavorite;
+          }
+        });
+
+        if (toBeRemoved) {
+          state.favoriteOffers = state.favoriteOffers.filter(
+            (item) => item.id !== action.payload.id);
+        } else {
+          state.favoriteOffers = [...state.favoriteOffers, action.payload];
         }
       });
   }

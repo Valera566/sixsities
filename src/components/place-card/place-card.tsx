@@ -1,11 +1,8 @@
 import { Offer } from '../../types/offer.ts';
-import {Link, useNavigate} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ratingOffers } from '../../utils/utils.ts';
 import cn from 'classnames';
-import {AppRoute, FavoriteStatus} from '../../const.ts';
-import {postFavoriteAction} from '../../store/api-actions.ts';
-import {useAppDispatch, useAppSelector} from '../../hooks';
-import {getIsUserAuthenticated} from '../../store/user-process/selectors.ts';
+import BookmarkButton from '../bookmark-button/bookmark-button.tsx';
 
 export type PlaceCardProps = {
   offer: Offer;
@@ -53,21 +50,6 @@ function PlaceCard({offer, setActiveCard, cardType = 'cities'}: PlaceCardProps):
 
   const articleClassName = getArticleClassName(cardType);
   const imageWrapperClassName = getImageWrapperClassName(cardType);
-  const isUserLoggedIn = useAppSelector(getIsUserAuthenticated);
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-
-  const handleFavoriteButtonClick = () => {
-    if (!isUserLoggedIn) {
-      navigate(AppRoute.Login);
-    }
-    dispatch(
-      postFavoriteAction([
-        isFavorite ? FavoriteStatus.NotFavorite : FavoriteStatus.Favorite,
-        id,
-      ])
-    );
-  };
 
   function handleMouseOver() {
     if(setActiveCard) {
@@ -84,10 +66,6 @@ function PlaceCard({offer, setActiveCard, cardType = 'cities'}: PlaceCardProps):
   const infoClassName = cn({
     'favorites__card-info': cardType === 'favorites',
     'place-card__info': true,
-  });
-
-  const bookmarkButtonClass = cn('place-card__bookmark-button', 'button', {
-    'place-card__bookmark-button--active': isFavorite,
   });
 
   return (
@@ -118,12 +96,7 @@ function PlaceCard({offer, setActiveCard, cardType = 'cities'}: PlaceCardProps):
             <b className="place-card__price-value">€{price}</b>
             <span className="place-card__price-text">/&nbsp;night</span>
           </div>
-          <button className={bookmarkButtonClass} type="button" onClick={handleFavoriteButtonClick}>
-            <svg className="place-card__bookmark-icon" width={18} height={19}>
-              <use xlinkHref="#icon-bookmark"/>
-            </svg>
-            <span className="visually-hidden">To bookmarks</span>
-          </button>
+          <BookmarkButton id={id} isFavorite={isFavorite} block={'place-card'} size={'small'}/>
         </div>
         <div className="place-card__rating rating">
           <div className="place-card__stars rating__stars">
