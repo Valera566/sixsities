@@ -18,7 +18,10 @@ module.exports = {
   overrides: [
     {
       files: [ '*test*' ],
-      rules: { '@typescript-eslint/unbound-method': 'off' }
+      rules: {
+        '@typescript-eslint/unbound-method': 'off',
+        "@typescript-eslint/await-thenable": "off"
+      }
     },
   ],
 }

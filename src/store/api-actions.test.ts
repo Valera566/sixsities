@@ -38,7 +38,7 @@ describe('Async actions', () => {
     it('should dispatch "getOffersActions.pending" and "getOffersActions.fulfilled" with thunk getOffersActions succeeded', async () => {
       mockAxiosAdapter.onGet(APIRoute.Offers).reply(200);
 
-      await store.dispatch(getOffersActions() as any);
+      await store.dispatch(getOffersActions() as unknown as Action);
       const actions = extractActionsTypes(store.getActions());
 
       expect(actions).toEqual([
@@ -50,7 +50,7 @@ describe('Async actions', () => {
     it('should dispatch "getOffersActions.pending" and "getOffersActions.rejected" with thunk getOffersActions rejected', async () => {
       mockAxiosAdapter.onGet(APIRoute.Offers).reply(400);
 
-      await store.dispatch(getOffersActions() as any);
+      await store.dispatch(getOffersActions() as unknown as Action);
       const actions = extractActionsTypes(store.getActions());
 
       expect(actions).toEqual([
@@ -66,7 +66,7 @@ describe('Async actions', () => {
     it('should dispatch "getOfferByIdAction.pending" and "getOfferByIdAction.fulfilled" with thunk getOfferByIdAction succeeded', async () => {
       mockAxiosAdapter.onGet(`${APIRoute.Offers}/${hotelId}`).reply(200);
 
-      await store.dispatch(getOfferByIdAction(hotelId) as any);
+      await store.dispatch(getOfferByIdAction(hotelId) as unknown as Action);
       const actions = extractActionsTypes(store.getActions());
 
       expect(actions).toEqual([
@@ -78,7 +78,7 @@ describe('Async actions', () => {
     it('should dispatch "getOfferByIdAction.pending" and "getOfferByIdAction.rejected" with thunk getOfferByIdAction rejected', async () => {
       mockAxiosAdapter.onGet(`${APIRoute.Offers}/${hotelId}`).reply(400);
 
-      await store.dispatch(getOfferByIdAction(hotelId) as any);
+      await store.dispatch(getOfferByIdAction(hotelId) as unknown as Action);
       const actions = extractActionsTypes(store.getActions());
 
       expect(actions).toEqual([
@@ -95,7 +95,7 @@ describe('Async actions', () => {
     it('should dispatch "getOffersNearbyAction.pending" and "getOffersNearbyAction.fulfilled" with thunk getOffersNearbyAction succeeded', async () => {
       mockAxiosAdapter.onGet(`${APIRoute.Offers}/${hotelId}/nearby`).reply(200);
 
-      await store.dispatch(getOffersNearbyAction(hotelId) as any);
+      await store.dispatch(getOffersNearbyAction(hotelId) as unknown as Action);
       const actions = extractActionsTypes(store.getActions());
 
       expect(actions).toEqual([
@@ -107,7 +107,7 @@ describe('Async actions', () => {
     it('should dispatch "getOffersNearbyAction.pending" and "getOffersNearbyAction.rejected" with thunk getOffersNearbyAction rejected', async () => {
       mockAxiosAdapter.onGet(`${APIRoute.Offers}/${hotelId}/nearby`).reply(400);
 
-      await store.dispatch(getOffersNearbyAction(hotelId) as any);
+      await store.dispatch(getOffersNearbyAction(hotelId) as unknown as Action);
       const actions = extractActionsTypes(store.getActions());
 
       expect(actions).toEqual([
@@ -115,7 +115,6 @@ describe('Async actions', () => {
         getOffersNearbyAction.rejected.type,
       ]);
     });
-
   });
 
   describe('getReviewsByIdAction', () => {
@@ -124,7 +123,7 @@ describe('Async actions', () => {
     it('should dispatch "getReviewsByIdAction.pending" and "getReviewsByIdAction.fulfilled" with thunk getReviewsByIdAction succeeded', async () => {
       mockAxiosAdapter.onGet(`${APIRoute.Reviews}/${hotelId}`).reply(200);
 
-      await store.dispatch(getReviewsByIdAction(hotelId) as any);
+      await store.dispatch(getReviewsByIdAction(hotelId) as unknown as Action);
       const actions = extractActionsTypes(store.getActions());
 
       expect(actions).toEqual([
@@ -136,7 +135,7 @@ describe('Async actions', () => {
     it('should dispatch "getReviewsByIdAction.pending" and "getReviewsByIdAction.rejected" with thunk getReviewsByIdAction rejected', async () => {
       mockAxiosAdapter.onGet(`${APIRoute.Reviews}/${hotelId}`).reply(400);
 
-      await store.dispatch(getReviewsByIdAction(hotelId) as any);
+      await store.dispatch(getReviewsByIdAction(hotelId) as unknown as Action);
       const actions = extractActionsTypes(store.getActions());
 
       expect(actions).toEqual([
@@ -160,7 +159,7 @@ describe('Async actions', () => {
         { id: '1', comment: 'Test comment', rating: 5 },
       ]);
 
-      await store.dispatch(postReviewAction(newReview) as any);
+      await store.dispatch(postReviewAction(newReview) as unknown as Action);
       const actions = extractActionsTypes(store.getActions());
 
       expect(actions).toEqual([
@@ -174,7 +173,7 @@ describe('Async actions', () => {
         { id: '1', comment: 'Test comment', rating: 5 },
       ]);
 
-      await store.dispatch(postReviewAction(newReview) as any);
+      await store.dispatch(postReviewAction(newReview) as unknown as Action);
       const actions = extractActionsTypes(store.getActions());
 
       expect(actions).toEqual([
@@ -188,7 +187,7 @@ describe('Async actions', () => {
     it('should dispatch "getFavoritesOffersAction.pending" and "getFavoritesOffersAction.fulfilled" with thunk "getFavoritesOffersAction"', async () => {
       mockAxiosAdapter.onGet(APIRoute.Favorites).reply(200);
 
-      await store.dispatch(getFavoritesOffersAction() as any);
+      await store.dispatch(getFavoritesOffersAction() as unknown as Action);
       const actions = extractActionsTypes(store.getActions());
 
       expect(actions).toEqual([
@@ -201,7 +200,7 @@ describe('Async actions', () => {
   it('should dispatch "getFavoritesOffersAction.pending" and "getFavoritesOffersAction.rejected" when server response 400', async() => {
     mockAxiosAdapter.onGet(APIRoute.Favorites).reply(400);
 
-    await store.dispatch(getFavoritesOffersAction() as any);
+    await store.dispatch(getFavoritesOffersAction() as unknown as Action);
     const actions = extractActionsTypes(store.getActions());
 
     expect(actions).toEqual([
@@ -224,7 +223,7 @@ describe('Async actions', () => {
         { id: 1, status: 1 },
       ]);
 
-      await store.dispatch(postFavoriteAction(newFavorite) as any);
+      await store.dispatch(postFavoriteAction(newFavorite) as unknown as Action);
       const actions = extractActionsTypes(store.getActions());
 
       expect(actions).toEqual([
@@ -238,7 +237,7 @@ describe('Async actions', () => {
         { error: 'Bad Request' },
       ]);
 
-      await store.dispatch(postFavoriteAction(newFavorite) as any);
+      await store.dispatch(postFavoriteAction(newFavorite) as unknown as Action);
       const actions = extractActionsTypes(store.getActions());
 
       expect(actions).toEqual([
@@ -254,7 +253,7 @@ describe('Async actions', () => {
       const fakeServerReplay = { token: 'secret', avatarUrl: 'https://example.com/avatar.png' };
       mockAxiosAdapter.onPost(APIRoute.Login).reply(200, fakeServerReplay);
 
-      await store.dispatch(loginAction(fakeUser) as any);
+      await store.dispatch(loginAction(fakeUser) as unknown as Action);
       const actions = extractActionsTypes(store.getActions());
 
       expect(actions).toEqual([
@@ -270,7 +269,7 @@ describe('Async actions', () => {
       mockAxiosAdapter.onPost(APIRoute.Login).reply(200, fakeServerReplay);
       const mockSaveToken = vi.spyOn(tokenStorage, 'saveToken');
 
-      await store.dispatch(loginAction(fakeUser) as any);
+      await store.dispatch(loginAction(fakeUser) as unknown as Action);
 
       expect(mockSaveToken).toBeCalledTimes(1);
       expect(mockSaveToken).toBeCalledWith(fakeServerReplay.token);
@@ -281,7 +280,7 @@ describe('Async actions', () => {
     it('should dispatch "logoutAction.pending", "logoutAction.fulfilled" when server response 204', async() => {
       mockAxiosAdapter.onDelete(APIRoute.Logout).reply(204);
 
-      await store.dispatch(logoutAction() as any);
+      await store.dispatch(logoutAction() as unknown as Action);
       const actions = extractActionsTypes(store.getActions());
 
       expect(actions).toEqual([
@@ -294,7 +293,7 @@ describe('Async actions', () => {
       mockAxiosAdapter.onDelete(APIRoute.Logout).reply(204);
       const mockDropToken = vi.spyOn(tokenStorage, 'dropToken');
 
-      await store.dispatch(logoutAction() as any);
+      await store.dispatch(logoutAction() as unknown as Action);
 
       expect(mockDropToken).toBeCalledTimes(1);
     });
@@ -308,7 +307,7 @@ describe('Async actions', () => {
         avatarUrl: 'https://example.com/avatar.png',
       });
 
-      await store.dispatch(checkAuthAction() as any);
+      await store.dispatch(checkAuthAction() as unknown as Action);
       const actions = extractActionsTypes(store.getActions());
 
       expect(actions).toEqual([
@@ -321,7 +320,7 @@ describe('Async actions', () => {
   it('should dispatch "checkAuthAction.pending" and "checkAuthAction.rejected" when server response 400', async() => {
     mockAxiosAdapter.onGet(APIRoute.Login).reply(400);
 
-    await store.dispatch(checkAuthAction() as any);
+    await store.dispatch(checkAuthAction() as unknown as Action);
     const actions = extractActionsTypes(store.getActions());
 
     expect(actions).toEqual([
