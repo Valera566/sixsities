@@ -27,7 +27,7 @@ export const ReviewForm = () => {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (id) {
-      dispatch(postReviewAction([{ comment, rating }, id]));
+      dispatch(postReviewAction({ comment, rating , hotelId: id}));
     }
   };
 

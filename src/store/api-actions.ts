@@ -63,13 +63,13 @@ export const getReviewsByIdAction = createAsyncThunk<
 
 export const postReviewAction = createAsyncThunk<
   Review[],
-  [ReviewData, string],
+  ReviewData,
   {
     dispatch: AppDispatch;
     state: State;
     extra: AxiosInstance;
   }
-  >('data/postReview', async ([{ comment, rating }, hotelId], { extra: api }) => {
+  >('data/postReview', async ({ comment, rating , hotelId}, { extra: api }) => {
     const { data } = await api.post<Review[]>(`${APIRoute.Reviews}/${hotelId}`, { comment, rating });
     return data;
   });

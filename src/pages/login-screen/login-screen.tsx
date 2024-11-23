@@ -94,6 +94,7 @@ function LoginScreen() {
                 placeholder="Email"
                 required
                 ref={loginRef}
+                data-testid="email"
               />
             </div>
             <div className="login__input-wrapper form__input-wrapper">
@@ -105,9 +106,10 @@ function LoginScreen() {
                 placeholder="Password"
                 required
                 ref={passwordRef}
+                data-testid="password"
               />
             </div>
-            <button className="login__submit form__submit button" type="submit">
+            <button className="login__submit form__submit button" type="submit" data-testid='sign-in-button'>
                 Sign in
             </button>
           </form>
